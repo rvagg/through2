@@ -20,5 +20,9 @@
   "license": "MIT",
   "dependencies": {
     "readable-stream": "~1.0.2"
+  },
+  "devDependencies": {
+    "tape": "~1.0.4",
+    "bl": "~0.2.0"
   }
 }
