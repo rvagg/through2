@@ -2,6 +2,8 @@
 
 [![Build Status](https://secure.travis-ci.org/rvagg/through2.png)](http://travis-ci.org/rvagg/through2)
 
+[![NPM](https://nodei.co/npm/through2.png?compact=true)](https://nodei.co/npm/through2/) 
+
 **A tiny wrapper around Node streams.Transform (Streams2) to avoid explicit subclassing noise**
 
 Inspired by [Dominic Tarr](https://github.com/dominictarr)'s [through](https://github.com/dominictarr/through) in that it's so much easier to make a stream out of a function than it is to set up the prototype chain properly: `through(function (chunk) { ... })`.
@@ -32,7 +34,7 @@ fs.createReadStream('data.csv')
     }
     this.push(data)
     callback()
-  })
+  }))
   .on('data', function (data) {
     all.push(data)
   })
