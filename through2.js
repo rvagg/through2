@@ -6,8 +6,8 @@ function Through2 (options, transform, flush) {
     return new Through2(options, transform, flush)
 
   if (typeof options == 'function') {
-    transform = options
     flush     = transform
+    transform = options
     options   = {}
   }
 
