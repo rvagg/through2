@@ -1,4 +1,4 @@
-const Transform = require('readable-stream/transform')
+const Transform = require('stream').Transform || require('readable-stream/transform')
     , inherits  = require('util').inherits
 
 function Through2 (options, transform, flush) {
