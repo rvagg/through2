@@ -8,11 +8,11 @@ function ctor (options, transform, flush) {
     options   = {}
   }
 
-  function Through2 () {
+  function Through2 (override) {
     if (!(this instanceof Through2))
-      return new Through2(options, transform, flush)
+      return new Through2(override || options, transform, flush)
 
-    Transform.call(this, options)
+    Transform.call(this, override || options)
   }
 
   inherits(Through2, Transform)

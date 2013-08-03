@@ -23,6 +23,7 @@
   },
   "devDependencies": {
     "tape": "~1.0.4",
-    "bl": "~0.2.0"
+    "bl": "~0.2.0",
+    "stream-spigot": "~2.0.0"
   }
 }

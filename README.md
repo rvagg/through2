@@ -74,6 +74,28 @@ To queue a new chunk, call `this.push(chunk)`&mdash;this can be called as many t
 
 The optional `flushFunction` is provided as the last argument (2nd or 3rd, depending on whether you've supplied options) is called just prior to the stream ending. Can be used to finish up any processing that may be in progress.
 
+<b><code>through2.ctor([ options, ] transformFunction[, flushFunction ])</code></b>
+
+Instead of returning a `stream.Transform` instance, `through2.ctor()` returns a **constructor** for a custom Transform. This is useful when you want to use the same transform logic in multiple instances.
+
+```js
+var FToC = through2.ctor({objectMode: true}, function (record, encoding, callback) {
+  if (record.temp != null && record.unit = "F") {
+    record.temp = ( ( record.temp - 32 ) * 5 ) / 9
+    record.unit = "C"
+  }
+  this.push(record)
+  callback()
+})
+
+// Create instances of FToC like so:
+var converter = new FToC()
+// Or:
+var converter = FToC()
+// Or specify/override options when you instantiate, if you prefer:
+var converter = FToC({objectMode: true})
+
+```
 
 ## License
 
