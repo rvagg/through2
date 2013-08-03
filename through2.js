@@ -1,23 +1,33 @@
 const Transform = require('stream').Transform || require('readable-stream/transform')
     , inherits  = require('util').inherits
 
-function Through2 (options, transform, flush) {
-  if (!(this instanceof Through2))
-    return new Through2(options, transform, flush)
-
+function ctor (options, transform, flush) {
   if (typeof options == 'function') {
     flush     = transform
     transform = options
     options   = {}
   }
 
-  this._transform = transform
-  if (typeof flush == 'function')
-    this._flush = flush
+  function Through2 () {
+    if (!(this instanceof Through2))
+      return new Through2(options, transform, flush)
 
-  Transform.call(this, options)
+    Transform.call(this, options)
+  }
+
+  inherits(Through2, Transform)
+
+  Through2.prototype._transform = transform
+
+  if (typeof flush == 'function')
+    Through2.prototype._flush = flush
+
+  return Through2
 }
 
-inherits(Through2, Transform)
+function make (options, transform, flush) {
+  return ctor(options, transform, flush)()
+}
 
-module.exports = Through2
+module.exports      = make
+module.exports.ctor = ctor
