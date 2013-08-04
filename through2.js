@@ -1,5 +1,6 @@
 const Transform = require('stream').Transform || require('readable-stream/transform')
     , inherits  = require('util').inherits
+    , xtend     = require('xtend')
 
 function ctor (options, transform, flush) {
   if (typeof options == 'function') {
@@ -10,9 +11,10 @@ function ctor (options, transform, flush) {
 
   function Through2 (override) {
     if (!(this instanceof Through2))
-      return new Through2(override || options, transform, flush)
+      return new Through2(override)
 
-    Transform.call(this, override || options)
+    this.options = xtend(options, override)
+    Transform.call(this, this.options)
   }
 
   inherits(Through2, Transform)

@@ -243,3 +243,72 @@ test('object through ctor override', function (t) {
   th2.write({ in: -100 })
   th2.end()
 })
+
+test('object settings available in transform', function (t) {
+  t.plan(6)
+
+  var Th2 = through2.ctor({objectMode: true, peek: true}, function (chunk, enc, callback) {
+    t.ok(this.options.peek, "reading options from inside _transform")
+    this.push({ out: chunk.in + 1 })
+    callback()
+  })
+
+  var th2 = Th2()
+
+  var e = 0
+  th2.on('data', function (o) {
+    t.deepEqual(o, { out: e === 0 ? 102 : e == 1 ? 203 : -99 }, 'got transformed object')
+    e++
+  })
+
+  th2.write({ in: 101 })
+  th2.write({ in: 202 })
+  th2.write({ in: -100 })
+  th2.end()
+})
+
+test('object settings available in transform override', function (t) {
+  t.plan(6)
+
+  var Th2 = through2.ctor(function (chunk, enc, callback) {
+    t.ok(this.options.peek, "reading options from inside _transform")
+    this.push({ out: chunk.in + 1 })
+    callback()
+  })
+
+  var th2 = Th2({objectMode: true, peek: true})
+
+  var e = 0
+  th2.on('data', function (o) {
+    t.deepEqual(o, { out: e === 0 ? 102 : e == 1 ? 203 : -99 }, 'got transformed object')
+    e++
+  })
+
+  th2.write({ in: 101 })
+  th2.write({ in: 202 })
+  th2.write({ in: -100 })
+  th2.end()
+})
+
+test('object override extends options', function (t) {
+  t.plan(6)
+
+  var Th2 = through2.ctor({objectMode: true}, function (chunk, enc, callback) {
+    t.ok(this.options.peek, "reading options from inside _transform")
+    this.push({ out: chunk.in + 1 })
+    callback()
+  })
+
+  var th2 = Th2({peek: true})
+
+  var e = 0
+  th2.on('data', function (o) {
+    t.deepEqual(o, { out: e === 0 ? 102 : e == 1 ? 203 : -99 }, 'got transformed object')
+    e++
+  })
+
+  th2.write({ in: 101 })
+  th2.write({ in: 202 })
+  th2.write({ in: -100 })
+  th2.end()
+})
