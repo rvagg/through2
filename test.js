@@ -134,10 +134,13 @@ test('plain through ctor', function (t) {
 })
 
 test('reuse through ctor', function (t) {
+  t.plan(4)
+
   var Th2 = through2.ctor(function (chunk, enc, callback) {
-    if (!this._i)
+    if (!this._i) {
+      t.ok(1, 'did not contain previous instance data (this._i)')
       this._i = 97 // 'a'
-    else
+    } else
       this._i++
     var b = new Buffer(chunk.length)
     for (var i = 0; i < chunk.length; i++)
@@ -156,7 +159,6 @@ test('reuse through ctor', function (t) {
     newInstance.pipe(bl(function (err, b) {
       var s = b.toString('ascii')
       t.equal('aaaaaaabbbbccccccc', s, 'got transformed string')
-      t.end()
     }))
 
     newInstance.write(crypto.randomBytes(7))
