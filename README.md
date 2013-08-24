@@ -45,7 +45,7 @@ fs.createReadStream('data.csv')
 
 ## API
 
-<b><code>through2([ options, ] transformFunction[, flushFunction ])</code></b>
+<b><code>through2([ options, ] [ transformFunction ] [, flushFunction ])</code></b>
 
 Consult the **[stream.Transform](http://nodejs.org/docs/latest/api/stream.html#stream_class_stream_transform)** documentation for the exact rules of the `transformFunction` (i.e. `this._transform`) and the optional `flushFunction` (i.e. `this._flush`).
 
@@ -69,6 +69,8 @@ fs.createReadStream('/tmp/important.dat')
 The `transformFunction` must have the following signature: `function (chunk, encoding, callback) {}`. A minimal implementation should call the `callback` function to indicate that the transformation is done, even if that transformation means discarding the chunk.
 
 To queue a new chunk, call `this.push(chunk)`&mdash;this can be called as many times as required before the `callback()` if you have multiple pieces to send on.
+
+If you **do not provide a `transformFunction`** then you will get a simple simple pass-through stream.
 
 ### flushFunction
 

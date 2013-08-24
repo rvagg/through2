@@ -2,12 +2,20 @@ const Transform = require('stream').Transform || require('readable-stream/transf
     , inherits  = require('util').inherits
     , xtend     = require('xtend')
 
+function noop (chunk, enc, callback) {
+  this.push(chunk)
+  callback()
+}
+
 function ctor (options, transform, flush) {
   if (typeof options == 'function') {
     flush     = transform
     transform = options
     options   = {}
   }
+
+  if (typeof transform != 'function')
+    transform = noop
 
   function Through2 (override) {
     if (!(this instanceof Through2))
