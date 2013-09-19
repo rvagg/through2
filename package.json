@@ -1,6 +1,6 @@
 {
   "name": "through2",
-  "version": "0.2.1",
+  "version": "0.2.2",
   "description": "A tiny wrapper around Node streams2 Transform to avoid explicit subclassing noise",
   "main": "through2.js",
   "scripts": {
@@ -20,7 +20,7 @@
   "license": "MIT",
   "dependencies": {
     "readable-stream": "~1.0.2",
-    "xtend": "~2.0.6"
+    "xtend": "~2.1.1"
   },
   "devDependencies": {
     "tape": "~1.0.4",
