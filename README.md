@@ -4,6 +4,9 @@
 
 [![NPM](https://nodei.co/npm/through2.png?compact=true)](https://nodei.co/npm/through2/) 
 
+[![david-dm](https://david-dm.org/rvagg/through2.png)](https://david-dm.org/rvagg/through2/)
+[![david-dm](https://david-dm.org/rvagg/through2/dev-status.png)](https://david-dm.org/rvagg/through2#info=devDependencies/)
+
 **A tiny wrapper around Node streams.Transform (Streams2) to avoid explicit subclassing noise**
 
 Inspired by [Dominic Tarr](https://github.com/dominictarr)'s [through](https://github.com/dominictarr/through) in that it's so much easier to make a stream out of a function than it is to set up the prototype chain properly: `through(function (chunk) { ... })`.
