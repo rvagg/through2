@@ -19,12 +19,12 @@
   "author": "Rod Vagg <r@va.gg> (https://github.com/rvagg)",
   "license": "MIT",
   "dependencies": {
-    "readable-stream": "~1.0.2",
+    "readable-stream": "~1.1.9",
     "xtend": "~2.1.1"
   },
   "devDependencies": {
-    "tape": "~1.0.4",
-    "bl": "~0.2.0",
-    "stream-spigot": "~2.0.0"
+    "tape": "~1.1.1",
+    "bl": "~0.4.1",
+    "stream-spigot": "~2.1.2"
   }
 }

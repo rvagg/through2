@@ -214,12 +214,12 @@ test('pipeable object through ctor', function (t) {
     t.deepEqual(o, { temp: expect.shift(), unit: 'C' }, 'got transformed object')
   })
 
-  spigot([
+  spigot({objectMode: true}, [
     {temp: -2.2, unit: 'F'},
     {temp: -40, unit: 'F'},
     {temp: 212, unit: 'F'},
     {temp: 22, unit: 'C'}
-  ], {objectMode: true}).pipe(th2)
+  ]).pipe(th2)
 })
 
 test('object through ctor override', function (t) {
