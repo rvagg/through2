@@ -4,7 +4,8 @@
   "description": "A tiny wrapper around Node streams2 Transform to avoid explicit subclassing noise",
   "main": "through2.js",
   "scripts": {
-    "test": "node test.js"
+    "test": "node test/test.js",
+    "test-local": "brtapsauce-local test/basic-test.js"
   },
   "repository": {
     "type": "git",
@@ -19,7 +20,7 @@
   "author": "Rod Vagg <r@va.gg> (https://github.com/rvagg)",
   "license": "MIT",
   "dependencies": {
-    "readable-stream": "~1.1.9",
+    "readable-stream": "~1.0.17",
     "xtend": "~2.1.1"
   },
   "devDependencies": {

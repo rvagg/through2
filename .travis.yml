@@ -10,3 +10,7 @@ notifications:
   email:
     - rod@vagg.org
 script: npm test
+env:
+  global:
+  - SAUCE_USER=through2-sauce
+  - secure: "iyAS90hY+Yk8MTOhFs4ILoL4CUFk4o4MD1U8+FVbOvwqdBgbUyqKXSaA0yFutJIA2WLVcgs2vUYKkEYSjfDNvOJtk07TtlJjnHoSVOlrecDaFKdOeA3/+d+pGe4mQ2b6lmiHh3XD1A0+XhmzY7kjcFyn6xRPN8Fqfjm8PMq9aC8="

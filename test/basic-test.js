@@ -1,5 +1,5 @@
 const test     = require('tape')
-    , through2 = require('./')
+    , through2 = require('../')
     , crypto   = require('crypto')
     , bl       = require('bl')
     , spigot   = require('stream-spigot')
