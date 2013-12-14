@@ -24,8 +24,8 @@
     "xtend": "~2.1.1"
   },
   "devDependencies": {
-    "tape": "~1.1.1",
-    "bl": "~0.4.1",
-    "stream-spigot": "~2.1.2"
+    "tape": "~2.3.0",
+    "bl": "~0.6.0",
+    "stream-spigot": "~3.0.1"
   }
 }

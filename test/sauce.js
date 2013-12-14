@@ -4,6 +4,7 @@ const user       = process.env.SAUCE_USER
     , key        = process.env.SAUCE_KEY
     , path       = require('path')
     , brtapsauce = require('brtapsauce')
+    , testFile   = path.join(__dirname, 'basic-test.js')
 
     , capabilities = [
           { browserName: 'chrome'            , platform: 'Windows XP', version: ''   }
@@ -31,7 +32,7 @@ brtapsauce({
     name         : 'Traversty'
   , user         : user
   , key          : key
-  , brsrc        : path.join(__dirname, 'browserify.js')
+  , brsrc        : testFile
   , capabilities : capabilities
   , options      : { timeout: 60 * 6 }
 })
