@@ -35,7 +35,23 @@ function ctor (options, transform, flush) {
 }
 
 function make (options, transform, flush) {
-  return ctor(options, transform, flush)()
+  if (typeof options == 'function') {
+    flush     = transform
+    transform = options
+    options   = {}
+  }
+
+  if (typeof transform != 'function')
+    transform = noop
+
+  var through2 = new Transform(options)
+
+  through2._transform = transform
+
+  if (typeof flush == 'function')
+    through2._flush = flush
+
+  return through2;
 }
 
 module.exports      = make
