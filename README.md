@@ -25,13 +25,17 @@ Inspired by [Dominic Tarr](https://github.com/dominictarr)'s [through](https://g
 
 ```js
 fs.createReadStream('ex.txt')
-    .pipe(through2(function (chunk, enc, callback) {
+  .pipe(through2(function (chunk, enc, callback) {
+
     for (var i = 0; i < chunk.length; i++)
       if (chunk[i] == 97)
         chunk[i] = 122 // swap 'a' for 'z'
+
     this.push(chunk)
+    
     callback()
-  }))
+
+   }))
   .pipe(fs.createWriteStream('out.txt'))
 ```
 
@@ -39,16 +43,21 @@ Or object streams:
 
 ```js
 var all = []
+
 fs.createReadStream('data.csv')
   .pipe(csv2())
   .pipe(through2({ objectMode: true }, function (chunk, enc, callback) {
-  	var data = {
+
+    var data = {
         name    : chunk[0]
       , address : chunk[3]
       , phone   : chunk[10]
     }
+    
     this.push(data)
+    
     callback()
+
   }))
   .on('data', function (data) {
     all.push(data)
@@ -72,10 +81,12 @@ The `options` argument is first, unlike standard convention, because if I'm pass
 
 ```js
 fs.createReadStream('/tmp/important.dat')
-	.pipe(through2({ objectMode: true, allowHalfOpen: false }, function (chunk, enc, cb) {
-		this.push(new Buffer('wut?'))
-  	cb()
-	})
+  .pipe(through2({ objectMode: true, allowHalfOpen: false }, function (chunk, enc, cb) {
+
+    this.push(new Buffer('wut?'))
+    cb()
+
+  })
   .pipe(fs.createWriteStream('/tmp/wut.txt'))
 ```
 
@@ -111,7 +122,6 @@ var converter = new FToC()
 var converter = FToC()
 // Or specify/override options when you instantiate, if you prefer:
 var converter = FToC({objectMode: true})
-
 ```
 
 ## License
