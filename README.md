@@ -46,7 +46,7 @@ var all = []
 
 fs.createReadStream('data.csv')
   .pipe(csv2())
-  .pipe(through2({ objectMode: true }, function (chunk, enc, callback) {
+  .pipe(through2.obj(function (chunk, enc, callback) {
 
     var data = {
         name    : chunk[0]
@@ -67,6 +67,8 @@ fs.createReadStream('data.csv')
   })
 ```
 
+Note that `through2.obj(fn)` is a convenience wrapper around `through2({ objectMode: true }, fn)`.
+
 ## API
 
 <b><code>through2([ options, ] [ transformFunction ] [, flushFunction ])</code></b>
@@ -75,7 +77,7 @@ Consult the **[stream.Transform](http://nodejs.org/docs/latest/api/stream.html#s
 
 ### options
 
-The options argument is optional and is passed straight through to `stream.Transform`. So you can use `objectMode:true` if you are processing non-binary streams.
+The options argument is optional and is passed straight through to `stream.Transform`. So you can use `objectMode:true` if you are processing non-binary streams (or just use `through2.obj()`).
 
 The `options` argument is first, unlike standard convention, because if I'm passing in an anonymous function then I'd prefer for the options argument to not get lost at the end of the call:
 
