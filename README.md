@@ -1,8 +1,14 @@
 # through2
 
+<!--
+
+soon ...
+
 [![Build Status](https://secure.travis-ci.org/rvagg/through2.png)](http://travis-ci.org/rvagg/through2)
 
 [![Build Status](https://saucelabs.com/browser-matrix/through2-sauce.svg)](https://travis-ci.org/rvagg/through2)
+
+-->
 
 [![NPM](https://nodei.co/npm/through2.png?compact=true)](https://nodei.co/npm/through2/) 
 
