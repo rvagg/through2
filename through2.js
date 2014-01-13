@@ -3,7 +3,7 @@ const Transform = require('readable-stream/transform')
     , xtend     = require('xtend')
 
 
-// a noop _transform funciton
+// a noop _transform function
 function noop (chunk, enc, callback) {
   callback(null, chunk)
 }
