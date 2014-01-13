@@ -64,3 +64,15 @@ module.exports.ctor = through2(function (options, transform, flush) {
 
   return Through2
 })
+
+
+module.exports.obj = through2(function (options, transform, flush) {
+  var t2 = new Transform(xtend({ objectMode: true }, options))
+
+  t2._transform = transform
+
+  if (flush)
+    t2._flush = flush
+
+  return t2
+})
