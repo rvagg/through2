@@ -71,11 +71,11 @@ Note that `through2.obj(fn)` is a convenience wrapper around `through2({ objectM
 
 ## API
 
-<b><code>through2([ options, ] [ transformFunction ] [, flushFunction ])</code></b>
+### through2([ options, ] [ transformFunction ] [, flushFunction ])
 
 Consult the **[stream.Transform](http://nodejs.org/docs/latest/api/stream.html#stream_class_stream_transform)** documentation for the exact rules of the `transformFunction` (i.e. `this._transform`) and the optional `flushFunction` (i.e. `this._flush`).
 
-### options
+#### options
 
 The options argument is optional and is passed straight through to `stream.Transform`. So you can use `objectMode:true` if you are processing non-binary streams (or just use `through2.obj()`).
 
@@ -92,7 +92,7 @@ fs.createReadStream('/tmp/important.dat')
   .pipe(fs.createWriteStream('/tmp/wut.txt'))
 ```
 
-### transformFunction
+#### transformFunction
 
 The `transformFunction` must have the following signature: `function (chunk, encoding, callback) {}`. A minimal implementation should call the `callback` function to indicate that the transformation is done, even if that transformation means discarding the chunk.
 
@@ -100,11 +100,11 @@ To queue a new chunk, call `this.push(chunk)`&mdash;this can be called as many t
 
 If you **do not provide a `transformFunction`** then you will get a simple simple pass-through stream.
 
-### flushFunction
+#### flushFunction
 
 The optional `flushFunction` is provided as the last argument (2nd or 3rd, depending on whether you've supplied options) is called just prior to the stream ending. Can be used to finish up any processing that may be in progress.
 
-<b><code>through2.ctor([ options, ] transformFunction[, flushFunction ])</code></b>
+### through2.ctor([ options, ] transformFunction[, flushFunction ])
 
 Instead of returning a `stream.Transform` instance, `through2.ctor()` returns a **constructor** for a custom Transform. This is useful when you want to use the same transform logic in multiple instances.
 
@@ -125,6 +125,17 @@ var converter = FToC()
 // Or specify/override options when you instantiate, if you prefer:
 var converter = FToC({objectMode: true})
 ```
+
+### through2.obj([ options, ] transformFunction[, flushFunction ])
+
+A short-cut to automatically insert `objectMode: true` into the options.
+
+### through2.term([ options, [, flushFunction ]])
+
+Create a **terminator** stream whose bytes go nowhere. The `transformFunction` used will just discard incoming data.
+
+Use a terminator stream at the end of your `pipe()` chain if you don't need to do anything with the data. For instance, you may be counting bytes with one `through2` stream but if you don't pipe that to a terminator stream then you'll hit the `highWaterMark` and your stream will stop flowing. Use a terminator to prevent any buffering and make the data keep flowing.
+
 
 ## License
 

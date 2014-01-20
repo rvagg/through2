@@ -9,6 +9,12 @@ function noop (chunk, enc, callback) {
 }
 
 
+// a terminator _transform function
+function terminator (chunk, enc, callback) {
+  callback(null)
+}
+
+
 // create a new export function, used by both the main export and
 // the .ctor export, contains common logic for dealing with arguments
 function through2 (construct) {
@@ -76,3 +82,23 @@ module.exports.obj = through2(function (options, transform, flush) {
 
   return t2
 })
+
+
+module.exports.term = function (options, flush) {
+  if (typeof options == 'function') {
+    flush   = options
+    options = {}
+  }
+
+  if (typeof flush != 'function')
+    flush = null
+
+  var t2 = new Transform(options)
+
+  t2._transform = terminator
+
+  if (flush)
+    t2._flush = flush
+
+  return t2
+}

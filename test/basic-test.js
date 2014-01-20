@@ -3,6 +3,7 @@ const test     = require('tape')
     , crypto   = require('crypto')
     , bl       = require('bl')
     , spigot   = require('stream-spigot')
+    , Readable = require('readable-stream').Readable
 
 test('plain through', function (t) {
   var th2 = through2(function (chunk, enc, callback) {
@@ -331,4 +332,58 @@ test('object override extends options', function (t) {
   th2.write({ in: 202 })
   th2.write({ in: -100 })
   th2.end()
+})
+
+// sanity check
+test('test non-terminated stream doesn\'t end properly', function (t) {
+  var chunks = 0
+    , src    = new Readable({ objectMode: true })
+    , dst    = through2.obj({ highWaterMark: 10 }, function (chunk, enc, cb) {
+        chunks++
+        cb(null, chunk)
+      }, function (cb) {
+        cb()
+        t.fail('should not have ended (sanity)')
+      })
+
+  src._read = function (n) {
+    setTimeout(function () {
+      this.push({ foo: 'bar' })
+    }.bind(this), 0)
+  }
+
+  src.pipe(dst) // no terminator
+
+  setTimeout(function () {
+    t.equal(chunks, 10, 'correct number of chunks processed')
+    t.end()
+  }, 100)
+})
+
+test('test terminated stream ends properly', function (t) {
+  var chunks = 0
+    , src    = new Readable({ objectMode: true })
+    , dst    = through2.obj({ highWaterMark: 10 }, function (chunk, enc, cb) {
+        chunks++
+        cb(null, chunk)
+      }, function (cb) {
+        cb()
+        t.end()
+      })
+
+  src._read = function (n) {
+    if (chunks == 19)
+      return this.push(null)
+
+    setTimeout(function () {
+      this.push({ foo: 'bar' })
+    }.bind(this), 0)
+  }
+
+  src.pipe(dst).pipe(through2.term())
+
+  setTimeout(function () {
+    t.equal(20, chunks, 'correct number of chunks processed')
+    t.end()
+  }, 100)
 })
