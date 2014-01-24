@@ -1,6 +1,6 @@
-const Transform = require('readable-stream/transform')
-    , inherits  = require('util').inherits
-    , xtend     = require('xtend')
+var Transform = require('readable-stream/transform')
+  , inherits  = require('util').inherits
+  , xtend     = require('xtend')
 
 
 // a noop _transform function
