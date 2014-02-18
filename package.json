@@ -20,7 +20,7 @@
   "author": "Rod Vagg <r@va.gg> (https://github.com/rvagg)",
   "license": "MIT",
   "dependencies": {
-    "readable-stream": "~1.0.17",
+    "readable-stream": "~1.1.10",
     "xtend": "~2.1.1"
   },
   "devDependencies": {
@@ -28,5 +28,8 @@
     "bl": "~0.6.0",
     "stream-spigot": "~3.0.1",
     "brtapsauce": "~0.2.2"
+  },
+  "publishConfig": {
+    "tag": "1.0"
   }
 }
