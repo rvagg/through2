@@ -98,6 +98,25 @@ test('object through with through2.obj', function (t) {
   th2.end()
 })
 
+test('object through with 2-arg transform', function (t) {
+  t.plan(3)
+
+  var th2 = through2.obj(function (chunk, callback) {
+    callback(null, { out: chunk.in + 1 })
+  })
+
+  var e = 0
+  th2.on('data', function (o) {
+    t.deepEqual(o, { out: e === 0 ? 102 : e == 1 ? 203 : -99 }, 'got transformed object')
+    e++
+  })
+
+  th2.write({ in: 101 })
+  th2.write({ in: 202 })
+  th2.write({ in: -100 })
+  th2.end()
+})
+
 test('flushing through', function (t) {
   var th2 = through2(function (chunk, enc, callback) {
     if (!this._i)
