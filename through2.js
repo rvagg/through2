@@ -9,9 +9,8 @@ function noop (chunk, enc, callback) {
 }
 
 
-// create a new export function, used by both the main export and
-// the .ctor export, contains common logic for dealing with arguments
-function through2 (construct) {
+// create a new export function, contains common logic for dealing with arguments
+function through2 (construct, objectMode) {
   return function (options, transform, flush) {
     if (typeof options == 'function') {
       flush     = transform
@@ -19,8 +18,14 @@ function through2 (construct) {
       options   = {}
     }
 
+    if (objectMode)
+      options.objectMode = true
+
     if (typeof transform != 'function')
       transform = noop
+
+    if (options.objectMode && transform.length === 2)
+      transform = convertToThreeArg(transform)
 
     if (typeof flush != 'function')
       flush = null
@@ -29,9 +34,15 @@ function through2 (construct) {
   }
 }
 
+// converts a 2-arg transform into the 3-arg form by ignoring `enc`
+// this only makes sense for objectMode streams!
+function convertToThreeArg (transform) {
+  return function (obj, enc, next) {
+    return transform(obj, next)
+  }
+}
 
-// main export, just make me a transform stream!
-module.exports = through2(function (options, transform, flush) {
+function makeTransform (options, transform, flush) {
   var t2 = new Transform(options)
 
   t2._transform = transform
@@ -40,8 +51,13 @@ module.exports = through2(function (options, transform, flush) {
     t2._flush = flush
 
   return t2
-})
+}
 
+// main export, just make me a transform stream!
+module.exports = through2(makeTransform)
+
+// make me an objectMode transform stream
+module.exports.obj = through2(makeTransform, true)
 
 // make me a reusable prototype that I can `new`, or implicitly `new`
 // with a constructor call
@@ -63,16 +79,4 @@ module.exports.ctor = through2(function (options, transform, flush) {
     Through2.prototype._flush = flush
 
   return Through2
-})
-
-
-module.exports.obj = through2(function (options, transform, flush) {
-  var t2 = new Transform(xtend({ objectMode: true }, options))
-
-  t2._transform = transform
-
-  if (flush)
-    t2._flush = flush
-
-  return t2
 })
