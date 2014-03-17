@@ -10,7 +10,7 @@ soon ...
 
 -->
 
-[![NPM](https://nodei.co/npm/through2.png?compact=true)](https://nodei.co/npm/through2/) 
+[![NPM](https://nodei.co/npm/through2.png?compact=true)](https://nodei.co/npm/through2/)
 
 <!--
 not happy with these, we need to peg to readable-stream@1.0.x so it'll always report out-of-date
@@ -34,7 +34,7 @@ fs.createReadStream('ex.txt')
         chunk[i] = 122 // swap 'a' for 'z'
 
     this.push(chunk)
-    
+
     callback()
 
    }))
@@ -55,9 +55,9 @@ fs.createReadStream('data.csv')
       , address : chunk[3]
       , phone   : chunk[10]
     }
-    
+
     this.push(data)
-    
+
     callback()
 
   }))
@@ -127,6 +127,13 @@ var converter = FToC()
 // Or specify/override options when you instantiate, if you prefer:
 var converter = FToC({objectMode: true})
 ```
+
+## See Also
+
+  - [through2-map](https://github.com/brycebaril/through2-map) - Array.prototype.map analog for streams.
+  - [through2-filter](https://github.com/brycebaril/through2-filter) - Array.prototype.filter analog for streams.
+  - [through2-reduce](https://github.com/brycebaril/through2-reduce) - Array.prototype.reduce analog for streams.
+  - [through2-spy](https://github.com/brycebaril/through2-spy) - Wrapper for simple stream.PassThrough spies.
 
 ## License
 
