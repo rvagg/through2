@@ -100,7 +100,7 @@ The `transformFunction` must have the following signature: `function (chunk, enc
 
 To queue a new chunk, call `this.push(chunk)`&mdash;this can be called as many times as required before the `callback()` if you have multiple pieces to send on.
 
-If you **do not provide a `transformFunction`** then you will get a simple simple pass-through stream.
+If you **do not provide a `transformFunction`** then you will get a simple pass-through stream.
 
 ### flushFunction
 
