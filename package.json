@@ -24,6 +24,7 @@
   "license": "MIT",
   "dependencies": {
     "readable-stream": "~1.0.17",
+    "stream-browserify": "^1.0.0",
     "xtend": "~3.0.0"
   },
   "devDependencies": {
