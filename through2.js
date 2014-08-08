@@ -4,14 +4,14 @@ var Transform = require('readable-stream/transform')
 
 function DestroyableTransform(opts) {
   Transform.call(this, opts)
-  this.destroyed = false
+  this._destroyed = false
 }
 
 inherits(DestroyableTransform, Transform)
 
 DestroyableTransform.destroy = function(err) {
-  if (this.destroyed) return
-  this.destroyed = true
+  if (this._destroyed) return
+  this._destroyed = true
   
   var self = this
   process.nextTick(function() {
