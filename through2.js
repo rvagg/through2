@@ -9,7 +9,7 @@ function DestroyableTransform(opts) {
 
 inherits(DestroyableTransform, Transform)
 
-DestroyableTransform.destroy = function(err) {
+DestroyableTransform.prototype.destroy = function(err) {
   if (this._destroyed) return
   this._destroyed = true
   
