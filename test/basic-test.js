@@ -332,3 +332,30 @@ test('object override extends options', function (t) {
   th2.write({ in: -100 })
   th2.end()
 })
+
+test('can be destroyed', function(t) {
+  t.plan(1)
+
+  var th = through2()
+
+  th.on('close', function() {
+    t.ok(true, 'shoud emit close')
+    t.end()
+  })
+
+  th.destroy()
+})
+
+test('can be destroyed twice', function(t) {
+  t.plan(1)
+
+  var th = through2()
+
+  th.on('close', function() {
+    t.ok(true, 'shoud emit close')
+    t.end()
+  })
+
+  th.destroy()
+  th.destroy()
+})
