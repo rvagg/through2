@@ -10,7 +10,7 @@ soon ...
 
 -->
 
-[![NPM](https://nodei.co/npm/through2.png?compact=true)](https://nodei.co/npm/through2/)
+[![NPM](https://nodei.co/npm/through2.png?downloads&downloadRank)](https://nodei.co/npm/through2/)
 
 <!--
 not happy with these, we need to peg to readable-stream@1.0.x so it'll always report out-of-date
