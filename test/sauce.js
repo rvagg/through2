@@ -1,12 +1,18 @@
 #!/usr/bin/env node
 
-const user       = process.env.SAUCE_USER
-    , key        = process.env.SAUCE_KEY
-    , path       = require('path')
-    , brtapsauce = require('brtapsauce')
-    , testFile   = path.join(__dirname, 'basic-test.js')
+var user       = process.env.SAUCE_USER
+  , key        = process.env.SAUCE_KEY
+  , path       = require('path')
+  , brtapsauce
+  , testFile   = path.join(__dirname, 'basic-test.js')
 
-    , capabilities = [
+try {
+  brtapsauce = require('brtapsauce')
+} catch (e) {
+  return
+}
+
+const capabilities = [
           { browserName: 'chrome'            , platform: 'Windows XP', version: ''   }
         , { browserName: 'firefox'           , platform: 'Windows 8' , version: ''   }
         , { browserName: 'firefox'           , platform: 'Windows XP', version: '4'  }
