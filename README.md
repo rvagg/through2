@@ -110,16 +110,16 @@ The optional `flushFunction` is provided as the last argument (2nd or 3rd, depen
 
 ```js
 fs.createReadStream('/tmp/important.dat')
-  .pipe(through2(function (chunk, enc, cb) {
-    this.push(chunk);
-    cb()
+  .pipe(through2(function (chunk, enc, cb) { 
+  	this.push(chunk);
+  	cb();
   }, function (cb) {
-  
-    this.push(new Buffer('tacking on an extra buffer to the end'))
-    cb();
-    
-  })
-  .pipe(fs.createWriteStream('/tmp/wut.txt'))
+
+  	this.push('tacking on an extra buffer to the end');
+  	cb();
+  	
+  }))
+  .pipe(fs.createWriteStream('/tmp/wut.txt'));
 ```
 
 <b><code>through2.ctor([ options, ] transformFunction[, flushFunction ])</code></b>
