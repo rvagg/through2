@@ -1,6 +1,6 @@
 {
   "name": "through2",
-  "version": "0.6.2",
+  "version": "0.6.3",
   "description": "A tiny wrapper around Node streams2 Transform to avoid explicit subclassing noise",
   "main": "through2.js",
   "scripts": {
