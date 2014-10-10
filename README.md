@@ -108,6 +108,18 @@ If you **do not provide a `transformFunction`** then you will get a simple pass-
 
 The optional `flushFunction` is provided as the last argument (2nd or 3rd, depending on whether you've supplied options) is called just prior to the stream ending. Can be used to finish up any processing that may be in progress.
 
+```js
+fs.createReadStream('/tmp/important.dat')
+  .pipe(through2(function (chunk, enc, cb) { 
+    this.push(chunk);
+    cb();
+  }, function (cb) {
+    this.push('tacking on an extra buffer to the end');
+    cb();
+  }))
+  .pipe(fs.createWriteStream('/tmp/wut.txt'));
+```
+
 <b><code>through2.ctor([ options, ] transformFunction[, flushFunction ])</code></b>
 
 Instead of returning a `stream.Transform` instance, `through2.ctor()` returns a **constructor** for a custom Transform. This is useful when you want to use the same transform logic in multiple instances.
