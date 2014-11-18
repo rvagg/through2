@@ -3,7 +3,7 @@ var Transform = require('readable-stream/transform')
   , xtend     = require('xtend')
 
 var debug = process.env['DEBUG'] || ''
-var DEBUG = (debug === '*') || (debug === 'through2')
+var DEBUG = (debug === '*') || (/through2/.test(debug))
 
 function DestroyableTransform(opts) {
   Transform.call(this, opts)
@@ -65,7 +65,7 @@ module.exports = through2(function (options, transform, flush) {
   
   var t2 = new DestroyableTransform(options)
 
-  if (DEBUG) transform = debugTransform(transform, t2)
+  if (DEBUG) transform = debugTransform(transform)
   t2._transform = transform
 
   if (flush)
@@ -106,7 +106,7 @@ module.exports.obj = through2(function (options, transform, flush) {
   
   var t2 = new DestroyableTransform(xtend({ objectMode: true, highWaterMark: 16 }, options))
 
-  if (DEBUG) transform = debugTransform(transform, t2)
+  if (DEBUG) transform = debugTransform(transform)
   t2._transform = transform
 
   if (flush)
@@ -115,9 +115,9 @@ module.exports.obj = through2(function (options, transform, flush) {
   return t2
 })
 
-function debugTransform(transform, ctx) {
-  return function debugTransform(chunk, enc, callback) {
+function debugTransform(transform) {
+  return function debugProxyFunction(chunk, enc, callback) {
     console.error('  through2 transform', typeof chunk, {length: chunk.length, encoding: enc})
-    transform.apply(ctx || this, arguments)
+    transform.apply(this, arguments)
   }
 }
