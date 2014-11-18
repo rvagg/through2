@@ -2,9 +2,20 @@ var Transform = require('readable-stream/transform')
   , inherits  = require('util').inherits
   , xtend     = require('xtend')
 
+var debug = process.env['DEBUG'] || ''
+var DEBUG = (debug === '*') || (debug === 'through2')
+
 function DestroyableTransform(opts) {
   Transform.call(this, opts)
   this._destroyed = false
+  if (DEBUG) {
+    this.on('finish', function() {
+      console.error('  through2 finish')
+    })
+    this.on('end', function() {
+      console.error('  through2 end')
+    })
+  }
 }
 
 inherits(DestroyableTransform, Transform)
@@ -50,8 +61,11 @@ function through2 (construct) {
 
 // main export, just make me a transform stream!
 module.exports = through2(function (options, transform, flush) {
+  if (DEBUG) console.error('  through2 initialize')
+  
   var t2 = new DestroyableTransform(options)
 
+  if (DEBUG) transform = debugTransform(transform, t2)
   t2._transform = transform
 
   if (flush)
@@ -64,6 +78,8 @@ module.exports = through2(function (options, transform, flush) {
 // make me a reusable prototype that I can `new`, or implicitly `new`
 // with a constructor call
 module.exports.ctor = through2(function (options, transform, flush) {
+  if (DEBUG) console.error('  through2.ctor initialize')
+  
   function Through2 (override) {
     if (!(this instanceof Through2))
       return new Through2(override)
@@ -75,6 +91,7 @@ module.exports.ctor = through2(function (options, transform, flush) {
 
   inherits(Through2, DestroyableTransform)
 
+  if (DEBUG) transform = debugTransform(transform)
   Through2.prototype._transform = transform
 
   if (flush)
@@ -85,8 +102,11 @@ module.exports.ctor = through2(function (options, transform, flush) {
 
 
 module.exports.obj = through2(function (options, transform, flush) {
+  if (DEBUG) console.error('  through2.obj initialize')
+  
   var t2 = new DestroyableTransform(xtend({ objectMode: true, highWaterMark: 16 }, options))
 
+  if (DEBUG) transform = debugTransform(transform, t2)
   t2._transform = transform
 
   if (flush)
@@ -94,3 +114,10 @@ module.exports.obj = through2(function (options, transform, flush) {
 
   return t2
 })
+
+function debugTransform(transform, ctx) {
+  return function debugTransform(chunk, enc, callback) {
+    console.error('  through2 transform', typeof chunk, {length: chunk.length, encoding: enc})
+    transform.apply(ctx || this, arguments)
+  }
+}
