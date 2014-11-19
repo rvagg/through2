@@ -8,14 +8,6 @@ var DEBUG = (debug === '*') || (/through2/.test(debug))
 function DestroyableTransform(opts) {
   Transform.call(this, opts)
   this._destroyed = false
-  if (DEBUG) {
-    this.on('finish', function() {
-      console.error('  through2 finish')
-    })
-    this.on('end', function() {
-      console.error('  through2 end')
-    })
-  }
 }
 
 inherits(DestroyableTransform, Transform)
@@ -61,11 +53,15 @@ function through2 (construct) {
 
 // main export, just make me a transform stream!
 module.exports = through2(function (options, transform, flush) {
-  if (DEBUG) console.error('  through2 initialize')
-  
   var t2 = new DestroyableTransform(options)
 
-  if (DEBUG) transform = debugTransform(transform)
+  if (DEBUG) {
+    var id = randomID()
+    console.error('  through2', id, 'initialize')
+    transform = debugTransform(transform, id)
+    debugEnd(t2, id)
+  }
+
   t2._transform = transform
 
   if (flush)
@@ -78,7 +74,10 @@ module.exports = through2(function (options, transform, flush) {
 // make me a reusable prototype that I can `new`, or implicitly `new`
 // with a constructor call
 module.exports.ctor = through2(function (options, transform, flush) {
-  if (DEBUG) console.error('  through2.ctor initialize')
+  if (DEBUG) {
+    var id = randomID()
+    console.error('  through2.ctor', id, 'initialize')
+  }
   
   function Through2 (override) {
     if (!(this instanceof Through2))
@@ -87,11 +86,16 @@ module.exports.ctor = through2(function (options, transform, flush) {
     this.options = xtend(options, override)
 
     DestroyableTransform.call(this, this.options)
+
+    if (DEBUG)
+      debugEnd(this, id)
   }
 
   inherits(Through2, DestroyableTransform)
 
-  if (DEBUG) transform = debugTransform(transform)
+  if (DEBUG)
+    transform = debugTransform(transform, id)
+
   Through2.prototype._transform = transform
 
   if (flush)
@@ -102,11 +106,15 @@ module.exports.ctor = through2(function (options, transform, flush) {
 
 
 module.exports.obj = through2(function (options, transform, flush) {
-  if (DEBUG) console.error('  through2.obj initialize')
-  
   var t2 = new DestroyableTransform(xtend({ objectMode: true, highWaterMark: 16 }, options))
-
-  if (DEBUG) transform = debugTransform(transform)
+  
+  if (DEBUG) {
+    var id = randomID()
+    console.error('  through2.obj', id, 'initialize')
+    transform = debugTransform(transform, id)
+    debugEnd(t2, id)
+  }
+  
   t2._transform = transform
 
   if (flush)
@@ -115,9 +123,22 @@ module.exports.obj = through2(function (options, transform, flush) {
   return t2
 })
 
-function debugTransform(transform) {
+function debugTransform(transform, id) {
   return function debugProxyFunction(chunk, enc, callback) {
-    console.error('  through2 transform', typeof chunk, {length: chunk.length, encoding: enc})
+    console.error('  through2', id, 'transform', typeof chunk, {length: chunk.length, encoding: enc})
     transform.apply(this, arguments)
   }
+}
+
+function debugEnd(destroyable, id) {
+  destroyable.on('finish', function() {
+    console.error('  through2', id, 'finish')
+  })
+  destroyable.on('end', function() {
+    console.error('  through2', id, 'end')
+  })
+}
+
+function randomID() {
+  return Math.random().toString(16).slice(2)
 }
