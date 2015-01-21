@@ -3,6 +3,9 @@
   "version": "0.6.3",
   "description": "A tiny wrapper around Node streams2 Transform to avoid explicit subclassing noise",
   "main": "through2.js",
+  "files": [
+    "through2.js"
+  ],
   "scripts": {
     "test": "node test/test.js",
     "test-local": "brtapsauce-local test/basic-test.js"
