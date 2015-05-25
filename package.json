@@ -4,8 +4,10 @@
   "description": "A tiny wrapper around Node streams2 Transform to avoid explicit subclassing noise",
   "main": "through2.js",
   "scripts": {
-    "test": "node test/test.js | faucet",
-    "test-local": "brtapsauce-local test/basic-test.js"
+    "test": "node test/test.js",
+    "test-local": "brtapsauce-local test/basic-test.js",
+    "coverage": "nyc node test/basic-test.js && nyc report",
+    "coveralls": "nyc node test/basic-test.js && nyc report --reporter=text-lcov | coveralls"
   },
   "repository": {
     "type": "git",
