@@ -6,7 +6,7 @@
 
 Inspired by [Dominic Tarr](https://github.com/dominictarr)'s [through](https://github.com/dominictarr/through) in that it's so much easier to make a stream out of a function than it is to set up the prototype chain properly: `through(function (chunk) { ... })`.
 
-Note: A **Streams3** version of through2 is available in npm with the tag `"1.0"` rather than `"latest"` so an `npm install through2` will get you the current Streams2 version (version number is 0.x.x). To use a Streams3 version use `npm install through2@1` to fetch the latest version 1.x.x. More information about Streams2 vs Streams3 and recommendations see the article **[Why I don't use Node's core 'stream' module](http://r.va.gg/2014/06/why-i-dont-use-nodes-core-stream-module.html)**.
+Note: As 2.x.x this module starts using **Streams3** instead of Stream2. To continue using a Streams2 version use `npm install through2@0` to fetch the latest version of 0.x.x. More information about Streams2 vs Streams3 and recommendations see the article **[Why I don't use Node's core 'stream' module](http://r.va.gg/2014/06/why-i-dont-use-nodes-core-stream-module.html)**.
 
 ```js
 fs.createReadStream('ex.txt')
