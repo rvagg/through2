@@ -4,10 +4,10 @@
   "description": "A tiny wrapper around Node streams2 Transform to avoid explicit subclassing noise",
   "main": "through2.js",
   "scripts": {
-    "test": "node test/test.js",
-    "test-local": "brtapsauce-local test/basic-test.js",
     "coverage": "nyc node test/basic-test.js && nyc report",
-    "coveralls": "nyc node test/basic-test.js && nyc report --reporter=text-lcov | coveralls"
+    "coveralls": "nyc node test/basic-test.js && nyc report --reporter=text-lcov | coveralls",
+    "test": "node test/test.js",
+    "test-local": "brtapsauce-local test/basic-test.js"
   },
   "repository": {
     "type": "git",
@@ -27,7 +27,9 @@
   },
   "devDependencies": {
     "bl": "~0.9.4",
+    "coveralls": "~2.11.3",
     "faucet": "0.0.1",
+    "nyc": "~3.0.0",
     "stream-spigot": "~3.0.5",
     "tape": "~4.0.0"
   }
