@@ -126,6 +126,7 @@ var converter = FToC({objectMode: true})
   - [through2-filter](https://github.com/brycebaril/through2-filter) - Array.prototype.filter analog for streams.
   - [through2-reduce](https://github.com/brycebaril/through2-reduce) - Array.prototype.reduce analog for streams.
   - [through2-spy](https://github.com/brycebaril/through2-spy) - Wrapper for simple stream.PassThrough spies.
+  - the [mississippi stream utility collection](https://github.com/maxogden/mississippi) includes `through2` as well as many more useful stream modules similar to this one
 
 ## License
 
