@@ -104,7 +104,7 @@ Instead of returning a `stream.Transform` instance, `through2.ctor()` returns a 
 
 ```js
 var FToC = through2.ctor({objectMode: true}, function (record, encoding, callback) {
-  if (record.temp != null && record.unit = "F") {
+  if (record.temp != null && record.unit == "F") {
     record.temp = ( ( record.temp - 32 ) * 5 ) / 9
     record.unit = "C"
   }
