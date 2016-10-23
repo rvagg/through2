@@ -21,7 +21,7 @@ fs.createReadStream('ex.txt')
    }))
   .pipe(fs.createWriteStream('out.txt'))
   .on('finish', function (){
-    doSomthingSpecial()
+    doSomethingSpecial()
   })
 ```
 
