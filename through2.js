@@ -1,4 +1,4 @@
-var Transform = require('readable-stream/transform')
+var Transform = require('stream').Transform || require('readable-stream').Transform
   , inherits  = require('util').inherits
   , xtend     = require('xtend')
 
