@@ -2,7 +2,7 @@
 
 [![NPM](https://nodei.co/npm/through2.png?downloads&downloadRank)](https://nodei.co/npm/through2/)
 
-**A tiny wrapper around Node streams.Transform (Streams2) to avoid explicit subclassing noise**
+**A tiny wrapper around Node streams.Transform (Streams2/3) to avoid explicit subclassing noise**
 
 Inspired by [Dominic Tarr](https://github.com/dominictarr)'s [through](https://github.com/dominictarr/through) in that it's so much easier to make a stream out of a function than it is to set up the prototype chain properly: `through(function (chunk) { ... })`.
 
@@ -133,4 +133,4 @@ var converter = FToC({objectMode: true})
 
 ## License
 
-**through2** is Copyright (c) 2013 Rod Vagg [@rvagg](https://twitter.com/rvagg) and licensed under the MIT license. All rights not explicitly granted in the MIT license are reserved. See the included LICENSE file for more details.
+**through2** is Copyright (c) Rod Vagg [@rvagg](https://twitter.com/rvagg) and additional contributors and licensed under the MIT license. All rights not explicitly granted in the MIT license are reserved. See the included LICENSE file for more details.
