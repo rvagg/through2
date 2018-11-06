@@ -3,6 +3,7 @@ const test     = require('tape')
     , crypto   = require('crypto')
     , bl       = require('bl')
     , spigot   = require('stream-spigot')
+    , Buffer   = require('safe-buffer').Buffer
 
 test('plain through', function (t) {
   var th2 = through2(function (chunk, enc, callback) {
