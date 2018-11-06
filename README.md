@@ -2,11 +2,11 @@
 
 [![NPM](https://nodei.co/npm/through2.png?downloads&downloadRank)](https://nodei.co/npm/through2/)
 
-**A tiny wrapper around Node streams.Transform (Streams2/3) to avoid explicit subclassing noise**
+**A tiny wrapper around Node.js streams.Transform (Streams2/3) to avoid explicit subclassing noise**
 
 Inspired by [Dominic Tarr](https://github.com/dominictarr)'s [through](https://github.com/dominictarr/through) in that it's so much easier to make a stream out of a function than it is to set up the prototype chain properly: `through(function (chunk) { ... })`.
 
-Note: As 2.x.x this module starts using **Streams3** instead of Stream2. To continue using a Streams2 version use `npm install through2@0` to fetch the latest version of 0.x.x. More information about Streams2 vs Streams3 and recommendations see the article **[Why I don't use Node's core 'stream' module](http://r.va.gg/2014/06/why-i-dont-use-nodes-core-stream-module.html)**.
+***Note: Users of Node.js 0.10 and 0.12 should install `through2@2.x`. As of through2@3.x, readable-stream@3 is being used and is not compatible with older versions of Node.js.***
 
 ```js
 fs.createReadStream('ex.txt')
