@@ -6,7 +6,7 @@
 
 Inspired by [Dominic Tarr](https://github.com/dominictarr)'s [through](https://github.com/dominictarr/through) in that it's so much easier to make a stream out of a function than it is to set up the prototype chain properly: `through(function (chunk) { ... })`.
 
-***Note: Users of Node.js 0.10 and 0.12 should install `through2@2.x`. As of through2@3.x, readable-stream@3 is being used and is not compatible with older versions of Node.js.***
+***Note: Users of Node.js 0.10 and 0.12 should install `through2@2.x`. As of through2@3.x, readable-stream@3 is being used and is not compatible with older versions of Node.js.*** _v2.x support is being maintained on the [v2.x](https://github.com/rvagg/through2/tree/v2.x) branch._
 
 ```js
 fs.createReadStream('ex.txt')
@@ -131,4 +131,4 @@ var converter = FToC({objectMode: true})
 
 ## License
 
-**through2** is Copyright (c) Rod Vagg [@rvagg](https://twitter.com/rvagg) and additional contributors and licensed under the MIT license. All rights not explicitly granted in the MIT license are reserved. See the included LICENSE file for more details.
+**through2** is Copyright (c) Rod Vagg and additional contributors and licensed under the MIT license. All rights not explicitly granted in the MIT license are reserved. See the included LICENSE file for more details.
