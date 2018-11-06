@@ -4,7 +4,7 @@
   "description": "A tiny wrapper around Node streams2 Transform to avoid explicit subclassing noise",
   "main": "through2.js",
   "scripts": {
-    "test": "node test/test.js | faucet"
+    "test": "nyc node test/test.js | faucet && nyc report"
   },
   "repository": {
     "type": "git",
@@ -25,6 +25,7 @@
   "devDependencies": {
     "bl": "~2.0.1",
     "faucet": "0.0.1",
+    "nyc": "~13.1.0",
     "stream-spigot": "~3.0.6",
     "tape": "~4.9.1"
   }
