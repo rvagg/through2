@@ -1,6 +1,5 @@
 var Transform = require('readable-stream').Transform
   , inherits  = require('util').inherits
-  , xtend     = require('xtend')
 
 function DestroyableTransform(opts) {
   Transform.call(this, opts)
@@ -68,7 +67,7 @@ module.exports.ctor = through2(function (options, transform, flush) {
     if (!(this instanceof Through2))
       return new Through2(override)
 
-    this.options = xtend(options, override)
+    this.options = Object.assign({}, options, override)
 
     DestroyableTransform.call(this, this.options)
   }
@@ -85,7 +84,7 @@ module.exports.ctor = through2(function (options, transform, flush) {
 
 
 module.exports.obj = through2(function (options, transform, flush) {
-  var t2 = new DestroyableTransform(xtend({ objectMode: true, highWaterMark: 16 }, options))
+  var t2 = new DestroyableTransform(Object.assign({ objectMode: true, highWaterMark: 16 }, options))
 
   t2._transform = transform
 
