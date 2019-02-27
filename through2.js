@@ -84,7 +84,7 @@ module.exports.ctor = through2(function (options, transform, flush) {
 
 
 module.exports.obj = through2(function (options, transform, flush) {
-  var t2 = new DestroyableTransform(Object.assign({}, { objectMode: true, highWaterMark: 16 }, options))
+  var t2 = new DestroyableTransform(Object.assign({ objectMode: true, highWaterMark: 16 }, options))
 
   t2._transform = transform
 
