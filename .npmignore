@@ -1,3 +1,4 @@
 test
 .jshintrc
 .travis.yml
+.nyc_output/
