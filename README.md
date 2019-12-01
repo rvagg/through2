@@ -54,7 +54,7 @@ Note that `through2.obj(fn)` is a convenience wrapper around `through2({ objectM
 
 <b><code>through2([ options, ] [ transformFunction ] [, flushFunction ])</code></b>
 
-Consult the **[stream.Transform](http://nodejs.org/docs/latest/api/stream.html#stream_class_stream_transform)** documentation for the exact rules of the `transformFunction` (i.e. `this._transform`) and the optional `flushFunction` (i.e. `this._flush`).
+Consult the **[stream.Transform](https://nodejs.org/docs/latest/api/stream.html#stream_class_stream_transform)** documentation for the exact rules of the `transformFunction` (i.e. `this._transform`) and the optional `flushFunction` (i.e. `this._flush`).
 
 ### options
 
