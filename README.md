@@ -69,7 +69,7 @@ fs.createReadStream('/tmp/important.dat')
       cb(null, 'wut?') // note we can use the second argument on the callback
                        // to provide data as an alternative to this.push('wut?')
     }
-  )
+  ))
   .pipe(fs.createWriteStream('/tmp/wut.txt'))
 ```
 
