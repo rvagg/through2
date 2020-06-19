@@ -1,5 +1,5 @@
 var Transform = require('readable-stream').Transform
-  , inherits  = require('util').inherits
+  , inherits  = require('inherits')
 
 function DestroyableTransform(opts) {
   Transform.call(this, opts)
