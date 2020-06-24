@@ -1,17 +1,17 @@
 # through2
 
+![Build & Test](https://github.com/rvagg/through2/workflows/Build%20&%20Test/badge.svg)
+
 [![NPM](https://nodei.co/npm/through2.png?downloads&downloadRank)](https://nodei.co/npm/through2/)
 
 **A tiny wrapper around Node.js streams.Transform (Streams2/3) to avoid explicit subclassing noise**
 
 Inspired by [Dominic Tarr](https://github.com/dominictarr)'s [through](https://github.com/dominictarr/through) in that it's so much easier to make a stream out of a function than it is to set up the prototype chain properly: `through(function (chunk) { ... })`.
 
-***Note: Users of Node.js 0.10 and 0.12 should install `through2@2.x`. As of through2@3.x, readable-stream@3 is being used and is not compatible with older versions of Node.js.*** _v2.x support is being maintained on the [v2.x](https://github.com/rvagg/through2/tree/v2.x) branch._
-
 ```js
 fs.createReadStream('ex.txt')
   .pipe(through2(function (chunk, enc, callback) {
-    for (var i = 0; i < chunk.length; i++)
+    for (let i = 0; i < chunk.length; i++)
       if (chunk[i] == 97)
         chunk[i] = 122 // swap 'a' for 'z'
 
@@ -26,12 +26,12 @@ fs.createReadStream('ex.txt')
 Or object streams:
 
 ```js
-var all = []
+const all = []
 
 fs.createReadStream('data.csv')
   .pipe(csv2())
   .pipe(through2.obj(function (chunk, enc, callback) {
-    var data = {
+    conat data = {
         name    : chunk[0]
       , address : chunk[3]
       , phone   : chunk[10]
@@ -49,6 +49,20 @@ fs.createReadStream('data.csv')
 ```
 
 Note that `through2.obj(fn)` is a convenience wrapper around `through2({ objectMode: true }, fn)`.
+
+## Do you need this?
+
+Since Node.js introduced [Simplified Stream Construction](https://nodejs.org/api/stream.html#stream_simplified_construction), many uses of **through2** have become redundant. Consider whether you really need to use **through2** or just want to use the core `'stream'` package (or ideally the `'readable-stream'` package from npm):
+
+```js
+const { Transform } = require('stream')
+
+const transformer = new Transform({
+  transform(chunk, enc, callback) {
+    // ...
+  }
+})
+```
 
 ## API
 
@@ -104,7 +118,7 @@ fs.createReadStream('/tmp/important.dat')
 Instead of returning a `stream.Transform` instance, `through2.ctor()` returns a **constructor** for a custom Transform. This is useful when you want to use the same transform logic in multiple instances.
 
 ```js
-var FToC = through2.ctor({objectMode: true}, function (record, encoding, callback) {
+const FToC = through2.ctor({objectMode: true}, function (record, encoding, callback) {
   if (record.temp != null && record.unit == "F") {
     record.temp = ( ( record.temp - 32 ) * 5 ) / 9
     record.unit = "C"
@@ -114,21 +128,13 @@ var FToC = through2.ctor({objectMode: true}, function (record, encoding, callbac
 })
 
 // Create instances of FToC like so:
-var converter = new FToC()
+constconverter = new FToC()
 // Or:
-var converter = FToC()
+const converter = FToC()
 // Or specify/override options when you instantiate, if you prefer:
-var converter = FToC({objectMode: true})
+const converter = FToC({objectMode: true})
 ```
-
-## See Also
-
-  - [through2-map](https://github.com/brycebaril/through2-map) - Array.prototype.map analog for streams.
-  - [through2-filter](https://github.com/brycebaril/through2-filter) - Array.prototype.filter analog for streams.
-  - [through2-reduce](https://github.com/brycebaril/through2-reduce) - Array.prototype.reduce analog for streams.
-  - [through2-spy](https://github.com/brycebaril/through2-spy) - Wrapper for simple stream.PassThrough spies.
-  - the [mississippi stream utility collection](https://github.com/maxogden/mississippi) includes `through2` as well as many more useful stream modules similar to this one
 
 ## License
 
-**through2** is Copyright (c) Rod Vagg and additional contributors and licensed under the MIT license. All rights not explicitly granted in the MIT license are reserved. See the included LICENSE file for more details.
+**through2** is Copyright &copy; Rod Vagg and additional contributors and licensed under the MIT license. All rights not explicitly granted in the MIT license are reserved. See the included LICENSE file for more details.
