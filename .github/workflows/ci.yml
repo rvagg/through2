@@ -1,0 +1,22 @@
+on: [push, pull_request]
+name: Build & Test
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        node-version: [8.x, 10.x, 12.x, 14.x]
+    steps:
+    - uses: actions/checkout@v2
+    - name: Use Node.js ${{ matrix.node-version }}
+      uses: actions/setup-node@v1
+      with:
+        node-version: ${{ matrix.node-version }}
+    - name: Build w/ readable-stream@3
+      run: npm install && npm install readable-stream@3
+    - name: Test
+      run: npm test
+    - name: Build w/ readable-stream@3
+      run: npm install && npm install readable-stream@2
+    - name: Test
+      run: npm test

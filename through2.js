@@ -1,95 +1,83 @@
-var Transform = require('readable-stream').Transform
-  , inherits  = require('inherits')
+const { Transform } = require('readable-stream')
 
-function DestroyableTransform(opts) {
-  Transform.call(this, opts)
-  this._destroyed = false
-}
-
-inherits(DestroyableTransform, Transform)
-
-DestroyableTransform.prototype.destroy = function(err) {
-  if (this._destroyed) return
-  this._destroyed = true
-  
-  var self = this
-  process.nextTick(function() {
-    if (err)
-      self.emit('error', err)
-    self.emit('close')
+function inherits (fn, sup) {
+  fn.super_ = sup
+  fn.prototype = Object.create(sup.prototype, {
+    constructor: { value: fn, enumerable: false, writable: true, configurable: true }
   })
 }
-
-// a noop _transform function
-function noop (chunk, enc, callback) {
-  callback(null, chunk)
-}
-
 
 // create a new export function, used by both the main export and
 // the .ctor export, contains common logic for dealing with arguments
 function through2 (construct) {
-  return function (options, transform, flush) {
-    if (typeof options == 'function') {
-      flush     = transform
+  return (options, transform, flush) => {
+    if (typeof options === 'function') {
+      flush = transform
       transform = options
-      options   = {}
+      options = {}
     }
 
-    if (typeof transform != 'function')
-      transform = noop
+    if (typeof transform !== 'function') {
+      // noop
+      transform = (chunk, enc, cb) => cb(null, chunk)
+    }
 
-    if (typeof flush != 'function')
+    if (typeof flush !== 'function') {
       flush = null
+    }
 
     return construct(options, transform, flush)
   }
 }
 
-
 // main export, just make me a transform stream!
-module.exports = through2(function (options, transform, flush) {
-  var t2 = new DestroyableTransform(options)
+const make = through2((options, transform, flush) => {
+  const t2 = new Transform(options)
 
   t2._transform = transform
 
-  if (flush)
+  if (flush) {
     t2._flush = flush
+  }
 
   return t2
 })
 
-
 // make me a reusable prototype that I can `new`, or implicitly `new`
 // with a constructor call
-module.exports.ctor = through2(function (options, transform, flush) {
+const ctor = through2((options, transform, flush) => {
   function Through2 (override) {
-    if (!(this instanceof Through2))
+    if (!(this instanceof Through2)) {
       return new Through2(override)
+    }
 
     this.options = Object.assign({}, options, override)
 
-    DestroyableTransform.call(this, this.options)
+    Transform.call(this, this.options)
+
+    this._transform = transform
+    if (flush) {
+      this._flush = flush
+    }
   }
 
-  inherits(Through2, DestroyableTransform)
-
-  Through2.prototype._transform = transform
-
-  if (flush)
-    Through2.prototype._flush = flush
+  inherits(Through2, Transform)
 
   return Through2
 })
 
-
-module.exports.obj = through2(function (options, transform, flush) {
-  var t2 = new DestroyableTransform(Object.assign({ objectMode: true, highWaterMark: 16 }, options))
+const obj = through2(function (options, transform, flush) {
+  const t2 = new Transform(Object.assign({ objectMode: true, highWaterMark: 16 }, options))
 
   t2._transform = transform
 
-  if (flush)
+  if (flush) {
     t2._flush = flush
+  }
 
   return t2
 })
+
+module.exports = make
+module.exports.ctor = ctor
+module.exports.obj = obj

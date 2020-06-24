@@ -4,19 +4,19 @@ on rvagg@fletcher:
 */
 
 const through2 = require('../')
-    , bl       = require('bl')
-    , crypto   = require('crypto')
-    , assert   = require('assert')
+const bl = require('bl')
+const crypto = require('crypto')
+const assert = require('assert')
 
 function run (callback) {
-  var bufs   = Array.apply(null, Array(10)).map(function () { return crypto.randomBytes(32) })
-    , stream = through2(function (chunk, env, callback) {
-        callback(null, chunk.toString('hex'))
-      })
+  var bufs = Array.apply(null, Array(10)).map(function () { return crypto.randomBytes(32) })
+  var stream = through2(function (chunk, env, callback) {
+    callback(null, chunk.toString('hex'))
+  })
 
   stream.pipe(bl(function (err, data) {
     assert(!err)
-    assert.equal(data.toString(), Buffer.concat(bufs).toString('hex'))
+    assert.strictEqual(data.toString(), Buffer.concat(bufs).toString('hex'))
     callback()
   }))
 
@@ -27,7 +27,7 @@ function run (callback) {
 }
 
 var count = 0
-  , start = Date.now()
+var start = Date.now()
 
 ;(function exec () {
   count++
