@@ -1,10 +1,19 @@
-const test = require('tape')
+/* eslint-env mocha */
+const test = it
+const { assert: t } = require('chai')
 const through2 = require('../')
-const crypto = require('crypto')
 const bl = require('bl')
 const spigot = require('stream-spigot')
 
-test('plain through', (t) => {
+function randomBytes (len) {
+  const bytes = new Uint8Array(len)
+  for (let i = 0; i < len; i++) {
+    bytes[i] = Math.floor(Math.random() * 0xff)
+  }
+  return bytes
+}
+
+test('plain through', (done) => {
   const th2 = through2(function (chunk, enc, callback) {
     if (!this._i) {
       this._i = 97
@@ -20,19 +29,19 @@ test('plain through', (t) => {
   })
 
   th2.pipe(bl((err, b) => {
-    t.error(err)
+    t.ifError(err)
     const s = b.toString('ascii')
     t.equal('aaaaaaaaaabbbbbcccccccccc', s, 'got transformed string')
-    t.end()
+    done()
   }))
 
-  th2.write(crypto.randomBytes(10))
-  th2.write(crypto.randomBytes(5))
-  th2.write(crypto.randomBytes(10))
+  th2.write(randomBytes(10))
+  th2.write(randomBytes(5))
+  th2.write(randomBytes(10))
   th2.end()
 })
 
-test('pipeable through', (t) => {
+test('pipeable through', (done) => {
   const th2 = through2(function (chunk, enc, callback) {
     if (!this._i) {
       this._i = 97
@@ -48,25 +57,23 @@ test('pipeable through', (t) => {
   })
 
   th2.pipe(bl((err, b) => {
-    t.error(err)
+    t.ifError(err)
     const s = b.toString('ascii')
     // bl() acts like a proper streams2 stream and passes as much as it's
     // asked for, so we really only get one write with such a small amount
     // of data
     t.equal(s, 'aaaaaaaaaaaaaaaaaaaaaaaaa', 'got transformed string')
-    t.end()
+    done()
   }))
 
   const bufs = bl()
-  bufs.append(crypto.randomBytes(10))
-  bufs.append(crypto.randomBytes(5))
-  bufs.append(crypto.randomBytes(10))
+  bufs.append(randomBytes(10))
+  bufs.append(randomBytes(5))
+  bufs.append(randomBytes(10))
   bufs.pipe(th2)
 })
 
-test('object through', (t) => {
-  t.plan(3)
-
+test('object through', (done) => {
   const th2 = through2({ objectMode: true }, function (chunk, enc, callback) {
     this.push({ out: chunk.in + 1 })
     callback()
@@ -75,7 +82,9 @@ test('object through', (t) => {
   let e = 0
   th2.on('data', (o) => {
     t.deepEqual(o, { out: e === 0 ? 102 : e === 1 ? 203 : -99 }, 'got transformed object')
-    e++
+    if (++e === 3) {
+      done()
+    }
   })
 
   th2.write({ in: 101 })
@@ -84,9 +93,7 @@ test('object through', (t) => {
   th2.end()
 })
 
-test('object through with through2.obj', (t) => {
-  t.plan(3)
-
+test('object through with through2.obj', (done) => {
   const th2 = through2.obj(function (chunk, enc, callback) {
     this.push({ out: chunk.in + 1 })
     callback()
@@ -95,7 +102,9 @@ test('object through with through2.obj', (t) => {
   let e = 0
   th2.on('data', (o) => {
     t.deepEqual(o, { out: e === 0 ? 102 : e === 1 ? 203 : -99 }, 'got transformed object')
-    e++
+    if (++e === 3) {
+      done()
+    }
   })
 
   th2.write({ in: 101 })
@@ -104,7 +113,7 @@ test('object through with through2.obj', (t) => {
   th2.end()
 })
 
-test('flushing through', (t) => {
+test('flushing through', (done) => {
   const th2 = through2(function (chunk, enc, callback) {
     if (!this._i) {
       this._i = 97
@@ -123,19 +132,19 @@ test('flushing through', (t) => {
   })
 
   th2.pipe(bl((err, b) => {
-    t.error(err)
+    t.ifError(err)
     const s = b.toString('ascii')
     t.equal(s, 'aaaaaaaaaabbbbbccccccccccend', 'got transformed string')
-    t.end()
+    done()
   }))
 
-  th2.write(crypto.randomBytes(10))
-  th2.write(crypto.randomBytes(5))
-  th2.write(crypto.randomBytes(10))
+  th2.write(randomBytes(10))
+  th2.write(randomBytes(5))
+  th2.write(randomBytes(10))
   th2.end()
 })
 
-test('plain through ctor', (t) => {
+test('plain through ctor', (done) => {
   const Th2 = through2.ctor(function (chunk, enc, callback) {
     if (!this._i) {
       this._i = 97 // 'a'
@@ -153,24 +162,23 @@ test('plain through ctor', (t) => {
   const th2 = new Th2()
 
   th2.pipe(bl((err, b) => {
-    t.error(err)
+    t.ifError(err)
     const s = b.toString('ascii')
     t.equal('aaaaaaaaaabbbbbcccccccccc', s, 'got transformed string')
-    t.end()
+    done()
   }))
 
-  th2.write(crypto.randomBytes(10))
-  th2.write(crypto.randomBytes(5))
-  th2.write(crypto.randomBytes(10))
+  th2.write(randomBytes(10))
+  th2.write(randomBytes(5))
+  th2.write(randomBytes(10))
   th2.end()
 })
 
-test('reuse through ctor', (t) => {
-  t.plan(6)
-
+test('reuse through ctor', (done) => {
+  let uses = 0
   const Th2 = through2.ctor(function (chunk, enc, callback) {
     if (!this._i) {
-      t.ok(1, 'did not contain previous instance data (this._i)')
+      uses++
       this._i = 97 // 'a'
     } else {
       this._i++
@@ -186,32 +194,32 @@ test('reuse through ctor', (t) => {
   const th2 = Th2()
 
   th2.pipe(bl((err, b) => {
-    t.error(err)
+    t.ifError(err)
     const s = b.toString('ascii')
     t.equal('aaaaaaaaaabbbbbcccccccccc', s, 'got transformed string')
 
     const newInstance = Th2()
     newInstance.pipe(bl((err, b) => {
-      t.error(err)
+      t.ifError(err)
       const s = b.toString('ascii')
       t.equal('aaaaaaabbbbccccccc', s, 'got transformed string')
+      t.equal(uses, 2)
+      done()
     }))
 
-    newInstance.write(crypto.randomBytes(7))
-    newInstance.write(crypto.randomBytes(4))
-    newInstance.write(crypto.randomBytes(7))
+    newInstance.write(randomBytes(7))
+    newInstance.write(randomBytes(4))
+    newInstance.write(randomBytes(7))
     newInstance.end()
   }))
 
-  th2.write(crypto.randomBytes(10))
-  th2.write(crypto.randomBytes(5))
-  th2.write(crypto.randomBytes(10))
+  th2.write(randomBytes(10))
+  th2.write(randomBytes(5))
+  th2.write(randomBytes(10))
   th2.end()
 })
 
-test('object through ctor', (t) => {
-  t.plan(3)
-
+test('object through ctor', (done) => {
   const Th2 = through2.ctor({ objectMode: true }, function (chunk, enc, callback) {
     this.push({ out: chunk.in + 1 })
     callback()
@@ -222,7 +230,9 @@ test('object through ctor', (t) => {
   let e = 0
   th2.on('data', (o) => {
     t.deepEqual(o, { out: e === 0 ? 102 : e === 1 ? 203 : -99 }, 'got transformed object')
-    e++
+    if (++e === 3) {
+      done()
+    }
   })
 
   th2.write({ in: 101 })
@@ -231,9 +241,7 @@ test('object through ctor', (t) => {
   th2.end()
 })
 
-test('pipeable object through ctor', (t) => {
-  t.plan(4)
-
+test('pipeable object through ctor', (done) => {
   const Th2 = through2.ctor({ objectMode: true }, function (record, enc, callback) {
     if (record.temp != null && record.unit === 'F') {
       record.temp = ((record.temp - 32) * 5) / 9
@@ -248,6 +256,9 @@ test('pipeable object through ctor', (t) => {
   const expect = [-19, -40, 100, 22]
   th2.on('data', (o) => {
     t.deepEqual(o, { temp: expect.shift(), unit: 'C' }, 'got transformed object')
+    if (!expect.length) {
+      done()
+    }
   })
 
   spigot({ objectMode: true }, [
@@ -258,9 +269,7 @@ test('pipeable object through ctor', (t) => {
   ]).pipe(th2)
 })
 
-test('object through ctor override', (t) => {
-  t.plan(3)
-
+test('object through ctor override', (done) => {
   const Th2 = through2.ctor(function (chunk, enc, callback) {
     this.push({ out: chunk.in + 1 })
     callback()
@@ -271,7 +280,9 @@ test('object through ctor override', (t) => {
   let e = 0
   th2.on('data', (o) => {
     t.deepEqual(o, { out: e === 0 ? 102 : e === 1 ? 203 : -99 }, 'got transformed object')
-    e++
+    if (++e === 3) {
+      done()
+    }
   })
 
   th2.write({ in: 101 })
@@ -280,9 +291,7 @@ test('object through ctor override', (t) => {
   th2.end()
 })
 
-test('object settings available in transform', (t) => {
-  t.plan(6)
-
+test('object settings available in transform', (done) => {
   const Th2 = through2.ctor({ objectMode: true, peek: true }, function (chunk, enc, callback) {
     t.ok(this.options.peek, 'reading options from inside _transform')
     this.push({ out: chunk.in + 1 })
@@ -294,7 +303,9 @@ test('object settings available in transform', (t) => {
   let e = 0
   th2.on('data', (o) => {
     t.deepEqual(o, { out: e === 0 ? 102 : e === 1 ? 203 : -99 }, 'got transformed object')
-    e++
+    if (++e === 3) {
+      done()
+    }
   })
 
   th2.write({ in: 101 })
@@ -303,9 +314,7 @@ test('object settings available in transform', (t) => {
   th2.end()
 })
 
-test('object settings available in transform override', (t) => {
-  t.plan(6)
-
+test('object settings available in transform override', (done) => {
   const Th2 = through2.ctor(function (chunk, enc, callback) {
     t.ok(this.options.peek, 'reading options from inside _transform')
     this.push({ out: chunk.in + 1 })
@@ -317,7 +326,9 @@ test('object settings available in transform override', (t) => {
   let e = 0
   th2.on('data', (o) => {
     t.deepEqual(o, { out: e === 0 ? 102 : e === 1 ? 203 : -99 }, 'got transformed object')
-    e++
+    if (++e === 3) {
+      done()
+    }
   })
 
   th2.write({ in: 101 })
@@ -326,9 +337,7 @@ test('object settings available in transform override', (t) => {
   th2.end()
 })
 
-test('object override extends options', (t) => {
-  t.plan(6)
-
+test('object override extends options', (done) => {
   const Th2 = through2.ctor({ objectMode: true }, function (chunk, enc, callback) {
     t.ok(this.options.peek, 'reading options from inside _transform')
     this.push({ out: chunk.in + 1 })
@@ -340,7 +349,9 @@ test('object override extends options', (t) => {
   let e = 0
   th2.on('data', (o) => {
     t.deepEqual(o, { out: e === 0 ? 102 : e === 1 ? 203 : -99 }, 'got transformed object')
-    e++
+    if (++e === 3) {
+      done()
+    }
   })
 
   th2.write({ in: 101 })
@@ -349,68 +360,67 @@ test('object override extends options', (t) => {
   th2.end()
 })
 
-test('ctor flush()', (t) => {
-  t.plan(2)
+test('ctor flush()', (done) => {
+  let chunkCalled = false
   const th2 = through2.ctor(
     (chunk, enc, callback) => {
-      t.equals(chunk.toString(), 'aa')
+      t.equal(chunk.toString(), 'aa')
+      chunkCalled = true
       callback()
     }, function fl () {
-      t.ok(true)
+      t(chunkCalled)
+      done()
     }
   )()
 
   th2.end('aa')
 })
 
-test('obj flush()', (t) => {
-  t.plan(2)
+test('obj flush()', (done) => {
+  let chunkCalled = false
   const th2 = through2.obj(
     (chunk, enc, callback) => {
-      t.deepEquals(chunk, { a: 'a' })
+      t.deepEqual(chunk, { a: 'a' })
+      chunkCalled = true
       callback()
     }, function fl () {
-      t.ok(true)
+      t(chunkCalled)
+      done()
     }
   )
 
   th2.end({ a: 'a' })
 })
 
-test('can be destroyed', (t) => {
-  t.plan(1)
-
+test('can be destroyed', (done) => {
   const th = through2()
 
   th.on('close', () => {
     t.ok(true, 'shoud emit close')
-    t.end()
+    done()
   })
 
   th.destroy()
 })
 
-test('can be destroyed twice', (t) => {
-  t.plan(1)
-
+test('can be destroyed twice', (done) => {
   const th = through2()
 
   th.on('close', () => {
     t.ok(true, 'shoud emit close')
-    t.end()
+    done()
   })
 
   th.destroy()
   th.destroy()
 })
 
-test('noop through', (t) => {
-  t.plan(2)
+test('noop through', (done) => {
   const th = through2()
   th.pipe(bl((err, data) => {
-    console.log('bl')
-    t.error(err)
-    t.equals(data.toString(), 'eeee')
+    t.ifError(err)
+    t.equal(data.toString(), 'eeee')
+    done()
   }))
   th.end('eeee')
 })

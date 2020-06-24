@@ -4,9 +4,11 @@
   "description": "A tiny wrapper around Node.js streams.Transform (Streams2/3) to avoid explicit subclassing noise",
   "main": "through2.js",
   "scripts": {
-    "test": "npm run lint && hundreds node test/test.js",
+    "test:node": "hundreds mocha test/test.js",
+    "test:browser": "node -e 'process.exit(process.version.startsWith(\"v8.\") ? 0 : 1)' || polendina --cleanup --runner=mocha test/test.js",
+    "test": "npm run lint && npm run test:node && npm run test:browser",
     "lint": "standard",
-    "coverage": "c8 --reporter=text --reporter=html node test/test.js && npx st -d coverage -p 8888"
+    "coverage": "c8 --reporter=text --reporter=html mocha test/test.js && npx st -d coverage -p 8888"
   },
   "repository": {
     "type": "git",
@@ -26,9 +28,11 @@
   },
   "devDependencies": {
     "bl": "^4.0.2",
+    "chai": "^4.2.0",
     "hundreds": "~0.0.7",
+    "mocha": "^7.2.0",
+    "polendina": "^1.0.0",
     "standard": "^14.3.4",
-    "stream-spigot": "^3.0.6",
-    "tape": "^5.0.1"
+    "stream-spigot": "^3.0.6"
   }
 }
