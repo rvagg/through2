@@ -13,11 +13,7 @@ jobs:
       uses: actions/setup-node@v1
       with:
         node-version: ${{ matrix.node-version }}
-    - name: Build w/ readable-stream@3
-      run: npm install && npm install readable-stream@3
-    - name: Test
-      run: npm test
-    - name: Build w/ readable-stream@3
-      run: npm install && npm install readable-stream@2
+    - name: Build
+      run: npm install
     - name: Test
       run: npm test

@@ -24,7 +24,7 @@
   "license": "MIT",
   "dependencies": {
     "inherits": "^2.0.4",
-    "readable-stream": "2 || 3"
+    "readable-stream": "3"
   },
   "devDependencies": {
     "bl": "^4.0.2",
