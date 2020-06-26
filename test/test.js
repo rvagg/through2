@@ -1,7 +1,9 @@
 /* eslint-env mocha */
+
 const test = it
 const { assert: t } = require('chai')
 const through2 = require('../')
+const { Buffer } = require('buffer')
 const bl = require('bl')
 const spigot = require('stream-spigot')
 

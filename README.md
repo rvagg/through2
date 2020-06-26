@@ -52,10 +52,10 @@ Note that `through2.obj(fn)` is a convenience wrapper around `through2({ objectM
 
 ## Do you need this?
 
-Since Node.js introduced [Simplified Stream Construction](https://nodejs.org/api/stream.html#stream_simplified_construction), many uses of **through2** have become redundant. Consider whether you really need to use **through2** or just want to use the core `'stream'` package (or ideally the `'readable-stream'` package from npm):
+Since Node.js introduced [Simplified Stream Construction](https://nodejs.org/api/stream.html#stream_simplified_construction), many uses of **through2** have become redundant. Consider whether you really need to use **through2** or just want to use the `'readable-stream'` package, or the core `'stream'` package (which is derived from `'readable-stream'`):
 
 ```js
-const { Transform } = require('stream')
+const { Transform } = require('readable-stream')
 
 const transformer = new Transform({
   transform(chunk, enc, callback) {
@@ -128,7 +128,7 @@ const FToC = through2.ctor({objectMode: true}, function (record, encoding, callb
 })
 
 // Create instances of FToC like so:
-constconverter = new FToC()
+const converter = new FToC()
 // Or:
 const converter = FToC()
 // Or specify/override options when you instantiate, if you prefer:
