@@ -31,7 +31,7 @@ const all = []
 fs.createReadStream('data.csv')
   .pipe(csv2())
   .pipe(through2.obj(function (chunk, enc, callback) {
-    conat data = {
+    const data = {
         name    : chunk[0]
       , address : chunk[3]
       , phone   : chunk[10]
