@@ -1,4 +1,4 @@
-const { Transform } = require('readable-stream')
+const Transform = require('readable-stream').Transform
 
 function inherits (fn, sup) {
   fn.super_ = sup
