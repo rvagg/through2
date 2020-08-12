@@ -31,8 +31,10 @@
     "chai": "^4.2.0",
     "hundreds": "~0.0.7",
     "mocha": "^7.2.0",
-    "polendina": "^1.0.0",
     "standard": "^14.3.4",
     "stream-spigot": "^3.0.6"
+  },
+  "optionalDependencies": {
+    "polendina": "^1.0.0"
   }
 }
