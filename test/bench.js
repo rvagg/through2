@@ -1,18 +1,18 @@
-const through2 = require('../')
-const { Buffer } = require('buffer')
-const bl = require('bl')
-const crypto = require('crypto')
-const assert = require('assert')
+import { Buffer } from 'node:buffer'
+import { randomBytes } from 'node:crypto'
+import assert, { strictEqual } from 'node:assert'
+import bl from 'bl'
+import through2 from '../through2.js'
 
 function run (callback) {
-  const bufs = Array.apply(null, Array(10)).map(() => crypto.randomBytes(32))
+  const bufs = Array.apply(null, Array(10)).map(() => randomBytes(32))
   const stream = through2((chunk, env, callback) => {
     callback(null, chunk.toString('hex'))
   })
 
   stream.pipe(bl((err, data) => {
     assert(!err)
-    assert.strictEqual(data.toString(), Buffer.concat(bufs).toString('hex'))
+    strictEqual(data.toString(), Buffer.concat(bufs).toString('hex'))
     callback()
   }))
 

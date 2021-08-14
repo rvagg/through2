@@ -10,6 +10,7 @@
     "lint": "standard",
     "coverage": "c8 --reporter=text --reporter=html mocha test/test.js && npx st -d coverage -p 8888"
   },
+  "type": "module",
   "repository": {
     "type": "git",
     "url": "https://github.com/rvagg/through2.git"
@@ -20,19 +21,20 @@
     "through",
     "transform"
   ],
+  "engines": {
+    "node": ">=12.20.0"
+  },
   "author": "Rod Vagg <r@va.gg> (https://github.com/rvagg)",
   "license": "MIT",
-  "dependencies": {
-    "readable-stream": "3"
-  },
   "devDependencies": {
-    "bl": "^4.0.2",
-    "buffer": "^5.6.0",
-    "chai": "^4.2.0",
-    "hundreds": "~0.0.7",
-    "mocha": "^7.2.0",
-    "polendina": "^1.0.0",
-    "standard": "^14.3.4",
+    "bl": "^5.0.0",
+    "chai": "^4.3.4",
+    "hundreds": "^0.0.9",
+    "install": "^0.13.0",
+    "mocha": "^9.0.3",
+    "npm": "^7.20.6",
+    "polendina": "^1.1.0",
+    "standard": "^16.0.3",
     "stream-spigot": "^3.0.6"
   }
 }

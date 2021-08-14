@@ -1,11 +1,11 @@
 /* eslint-env mocha */
 
+import { assert as t } from 'chai'
+import through2, { obj, ctor } from '../through2.js'
+import bl from 'bl'
+import spigot from 'stream-spigot'
+
 const test = it
-const { assert: t } = require('chai')
-const through2 = require('../')
-const { Buffer } = require('buffer')
-const bl = require('bl')
-const spigot = require('stream-spigot')
 
 function randomBytes (len) {
   const bytes = new Uint8Array(len)
@@ -22,7 +22,7 @@ test('plain through', (done) => {
     } else { // 'a'
       this._i++
     }
-    const b = Buffer.alloc(chunk.length)
+    const b = new Uint8Array(chunk.length)
     for (let i = 0; i < chunk.length; i++) {
       b[i] = this._i
     }
@@ -50,7 +50,7 @@ test('pipeable through', (done) => {
     } else { // 'a'
       this._i++
     }
-    const b = Buffer.alloc(chunk.length)
+    const b = new Uint8Array(chunk.length)
     for (let i = 0; i < chunk.length; i++) {
       b[i] = this._i
     }
@@ -96,7 +96,7 @@ test('object through', (done) => {
 })
 
 test('object through with through2.obj', (done) => {
-  const th2 = through2.obj(function (chunk, enc, callback) {
+  const th2 = obj(function (chunk, enc, callback) {
     this.push({ out: chunk.in + 1 })
     callback()
   })
@@ -122,14 +122,14 @@ test('flushing through', (done) => {
     } else { // 'a'
       this._i++
     }
-    const b = Buffer.alloc(chunk.length)
+    const b = new Uint8Array(chunk.length)
     for (let i = 0; i < chunk.length; i++) {
       b[i] = this._i
     }
     this.push(b)
     callback()
   }, function (callback) {
-    this.push(Buffer.from([101, 110, 100]))
+    this.push(new Uint8Array([101, 110, 100]))
     callback()
   })
 
@@ -147,13 +147,13 @@ test('flushing through', (done) => {
 })
 
 test('plain through ctor', (done) => {
-  const Th2 = through2.ctor(function (chunk, enc, callback) {
+  const Th2 = ctor(function (chunk, enc, callback) {
     if (!this._i) {
       this._i = 97 // 'a'
     } else {
       this._i++
     }
-    const b = Buffer.alloc(chunk.length)
+    const b = new Uint8Array(chunk.length)
     for (let i = 0; i < chunk.length; i++) {
       b[i] = this._i
     }
@@ -178,14 +178,14 @@ test('plain through ctor', (done) => {
 
 test('reuse through ctor', (done) => {
   let uses = 0
-  const Th2 = through2.ctor(function (chunk, enc, callback) {
+  const Th2 = ctor(function (chunk, enc, callback) {
     if (!this._i) {
       uses++
       this._i = 97 // 'a'
     } else {
       this._i++
     }
-    const b = Buffer.alloc(chunk.length)
+    const b = new Uint8Array(chunk.length)
     for (let i = 0; i < chunk.length; i++) {
       b[i] = this._i
     }
@@ -193,14 +193,14 @@ test('reuse through ctor', (done) => {
     callback()
   })
 
-  const th2 = Th2()
+  const th2 = new Th2()
 
   th2.pipe(bl((err, b) => {
     t.ifError(err)
     const s = b.toString('ascii')
     t.equal('aaaaaaaaaabbbbbcccccccccc', s, 'got transformed string')
 
-    const newInstance = Th2()
+    const newInstance = new Th2()
     newInstance.pipe(bl((err, b) => {
       t.ifError(err)
       const s = b.toString('ascii')
@@ -222,7 +222,7 @@ test('reuse through ctor', (done) => {
 })
 
 test('object through ctor', (done) => {
-  const Th2 = through2.ctor({ objectMode: true }, function (chunk, enc, callback) {
+  const Th2 = ctor({ objectMode: true }, function (chunk, enc, callback) {
     this.push({ out: chunk.in + 1 })
     callback()
   })
@@ -244,7 +244,7 @@ test('object through ctor', (done) => {
 })
 
 test('pipeable object through ctor', (done) => {
-  const Th2 = through2.ctor({ objectMode: true }, function (record, enc, callback) {
+  const Th2 = ctor({ objectMode: true }, function (record, enc, callback) {
     if (record.temp != null && record.unit === 'F') {
       record.temp = ((record.temp - 32) * 5) / 9
       record.unit = 'C'
@@ -253,7 +253,7 @@ test('pipeable object through ctor', (done) => {
     callback()
   })
 
-  const th2 = Th2()
+  const th2 = new Th2()
 
   const expect = [-19, -40, 100, 22]
   th2.on('data', (o) => {
@@ -272,12 +272,12 @@ test('pipeable object through ctor', (done) => {
 })
 
 test('object through ctor override', (done) => {
-  const Th2 = through2.ctor(function (chunk, enc, callback) {
+  const Th2 = ctor(function (chunk, enc, callback) {
     this.push({ out: chunk.in + 1 })
     callback()
   })
 
-  const th2 = Th2({ objectMode: true })
+  const th2 = new Th2({ objectMode: true })
 
   let e = 0
   th2.on('data', (o) => {
@@ -294,13 +294,13 @@ test('object through ctor override', (done) => {
 })
 
 test('object settings available in transform', (done) => {
-  const Th2 = through2.ctor({ objectMode: true, peek: true }, function (chunk, enc, callback) {
+  const Th2 = ctor({ objectMode: true, peek: true }, function (chunk, enc, callback) {
     t.ok(this.options.peek, 'reading options from inside _transform')
     this.push({ out: chunk.in + 1 })
     callback()
   })
 
-  const th2 = Th2()
+  const th2 = new Th2()
 
   let e = 0
   th2.on('data', (o) => {
@@ -317,13 +317,13 @@ test('object settings available in transform', (done) => {
 })
 
 test('object settings available in transform override', (done) => {
-  const Th2 = through2.ctor(function (chunk, enc, callback) {
+  const Th2 = ctor(function (chunk, enc, callback) {
     t.ok(this.options.peek, 'reading options from inside _transform')
     this.push({ out: chunk.in + 1 })
     callback()
   })
 
-  const th2 = Th2({ objectMode: true, peek: true })
+  const th2 = new Th2({ objectMode: true, peek: true })
 
   let e = 0
   th2.on('data', (o) => {
@@ -340,13 +340,13 @@ test('object settings available in transform override', (done) => {
 })
 
 test('object override extends options', (done) => {
-  const Th2 = through2.ctor({ objectMode: true }, function (chunk, enc, callback) {
+  const Th2 = ctor({ objectMode: true }, function (chunk, enc, callback) {
     t.ok(this.options.peek, 'reading options from inside _transform')
     this.push({ out: chunk.in + 1 })
     callback()
   })
 
-  const th2 = Th2({ peek: true })
+  const th2 = new Th2({ peek: true })
 
   let e = 0
   th2.on('data', (o) => {
@@ -364,7 +364,7 @@ test('object override extends options', (done) => {
 
 test('ctor flush()', (done) => {
   let chunkCalled = false
-  const th2 = through2.ctor(
+  const Th2 = ctor(
     (chunk, enc, callback) => {
       t.equal(chunk.toString(), 'aa')
       chunkCalled = true
@@ -373,14 +373,14 @@ test('ctor flush()', (done) => {
       t(chunkCalled)
       done()
     }
-  )()
+  )
 
-  th2.end('aa')
+  new Th2().end('aa')
 })
 
 test('obj flush()', (done) => {
   let chunkCalled = false
-  const th2 = through2.obj(
+  const th2 = obj(
     (chunk, enc, callback) => {
       t.deepEqual(chunk, { a: 'a' })
       chunkCalled = true
