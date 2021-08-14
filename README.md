@@ -55,7 +55,7 @@ Note that `through2.obj(fn)` is a convenience wrapper around `through2({ objectM
 Since Node.js introduced [Simplified Stream Construction](https://nodejs.org/api/stream.html#stream_simplified_construction), many uses of **through2** have become redundant. Consider whether you really need to use **through2** or just want to use the `'readable-stream'` package, or the core `'stream'` package (which is derived from `'readable-stream'`):
 
 ```js
-const { Transform } = require('readable-stream')
+import { Transform } from 'node:stream'
 
 const transformer = new Transform({
   transform(chunk, enc, callback) {
