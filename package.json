@@ -23,7 +23,7 @@
   "author": "Rod Vagg <r@va.gg> (https://github.com/rvagg)",
   "license": "MIT",
   "dependencies": {
-    "readable-stream": "4.2.0"
+    "readable-stream": "^4.0.0"
   },
   "devDependencies": {
     "bl": "^4.0.2",
