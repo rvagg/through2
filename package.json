@@ -6,6 +6,7 @@
   "scripts": {
     "test:node": "hundreds mocha test/test.js",
     "test:browser": "node -e 'process.exit(process.version.startsWith(\"v8.\") ? 0 : 1)' || polendina --cleanup --runner=mocha test/test.js",
+    "test:ci": "npm run lint && npm run test:node && npm run test:browser",
     "test": "npm run lint && npm run test:node && npm run test:browser",
     "lint": "standard",
     "coverage": "c8 --reporter=text --reporter=html mocha test/test.js && npx st -d coverage -p 8888"
