@@ -100,19 +100,18 @@ export function transform (transformFn, flushFn) {
 }
 
 /**
- * Drive an async-generator transform with backpressure on both sides.
+ * Drive an async-generator transform as a `{ readable, writable }` pair.
  *
- * Returns a `{ readable, writable }` pair (the structural shape `pipeThrough`
- * accepts) rather than a `TransformStream`, because we need to react to
- * `reader.cancel()` / `writer.abort()`. The Transformer `cancel` hook on
- * `TransformStream` is in the WHATWG spec but not yet implemented in major
- * browsers (as of 2026); `ReadableStream`'s `cancel` and `WritableStream`'s
- * `abort` hooks are universally available, so we use those instead.
+ * The pair shape (rather than a `TransformStream`) is required because we
+ * need cancellation hooks: the `Transformer.cancel` callback is in the
+ * WHATWG Streams spec but not yet implemented in major browsers as of 2026,
+ * whereas `ReadableStream.cancel` and `WritableStream.abort` are universally
+ * available. The pair satisfies `pipeThrough`'s structural contract.
  *
- * Backpressure: writes pause when the internal queue reaches the HWM
- * (returning a pending promise from `write()` propagates pressure upstream);
- * the consumer yields to the macrotask queue when `controller.desiredSize`
- * goes negative.
+ * Backpressure follows the standard pull-based model: `pull()` enqueues one
+ * yielded value per call and is invoked by the runtime exactly when the
+ * readable buffer has room; `write()` returns a pending promise when the
+ * internal queue is full, propagating pressure upstream.
  *
  * @param {AsyncGenWebTransformFn} gen
  * @param {WebFlushFn} [flushFn]
@@ -126,6 +125,7 @@ function asyncGenTransform (gen, flushFn) {
   /** @type {Array<(value?: any) => void>} */
   const writeWaiters = []
   let sourceEnded = false
+  let flushed = false
 
   const QUEUE_HWM = 16
 
@@ -137,14 +137,7 @@ function asyncGenTransform (gen, flushFn) {
     while (arr.length) /** @type {(value?: any) => void} */ (arr.shift())()
   }
 
-  // End the source iterable cleanly. Used by close, abort, and cancel paths
-  // so the user's `for await` unwinds and its `finally` runs.
-  const endSource = () => {
-    sourceEnded = true
-    wakeAll(sourceWakeups)
-    wakeAll(writeWaiters)
-  }
-
+  // The source iterable user code consumes via `for await (const x of source)`.
   const source = (async function * () {
     while (true) {
       while (queue.length > 0) {
@@ -156,64 +149,93 @@ function asyncGenTransform (gen, flushFn) {
     }
   })()
 
-  /** @type {Promise<void> | null} */
-  let consumerDone = null
+  // Build the user's iterator once; pull() drives it on demand.
+  const iter = gen(source)
 
-  const readable = new ReadableStream({
-    start (controller) {
-      consumerDone = (async () => {
+  // Controllers captured in start() so the two sides can cross-propagate
+  // termination (matching the WHATWG TransformStream behaviour: cancel on
+  // one side errors the other).
+  /** @type {ReadableStreamDefaultController<any> | null} */
+  let readableController = null
+  /** @type {WritableStreamDefaultController | null} */
+  let writableController = null
+  let terminating = false
+
+  // Shared cleanup: end the source, finalize the user's generator (running
+  // its `finally`), error the opposite side. Idempotent.
+  const finalize = async (/** @type {any} */ reason, /** @type {'readable'|'writable'} */ origin) => {
+    if (terminating) return
+    terminating = true
+    sourceEnded = true
+    wakeAll(sourceWakeups)
+    wakeAll(writeWaiters)
+    if (typeof iter.return === 'function') {
+      try { await iter.return() } catch { /* user finally threw; ignored */ }
+    }
+    if (origin === 'readable' && writableController) {
+      try { writableController.error(reason) } catch { /* already errored */ }
+    } else if (origin === 'writable' && readableController) {
+      try { readableController.error(reason) } catch { /* already errored */ }
+    }
+  }
+
+  return {
+    readable: new ReadableStream({
+      start (controller) { readableController = controller },
+      async pull (controller) {
         try {
-          for await (const out of gen(source)) {
-            controller.enqueue(out)
-            while (controller.desiredSize !== null && controller.desiredSize < 0) {
-              await new Promise((resolve) => setTimeout(resolve, 0))
-            }
+          const { value, done } = await iter.next()
+          if (!done) {
+            controller.enqueue(value)
+            return
           }
-          if (flushFn) {
-            if (fnKind(flushFn) === 'async') {
-              const fn = /** @type {AsyncWebFlushFn} */ (flushFn)
-              const out = await fn()
-              if (out !== undefined) controller.enqueue(out)
-            } else {
-              // Classic flush expects a TransformStreamDefaultController; we
-              // have a ReadableStream's controller. Synthesize a compatible
-              // shape (enqueue / error / terminate).
-              /** @type {any} */
-              const proxy = {
-                enqueue: (/** @type {any} */ c) => controller.enqueue(c),
-                error: (/** @type {any} */ e) => controller.error(e),
-                terminate: () => controller.close()
+          if (!flushed) {
+            flushed = true
+            if (flushFn) {
+              if (fnKind(flushFn) === 'async') {
+                const fn = /** @type {AsyncWebFlushFn} */ (flushFn)
+                const out = await fn()
+                if (out !== undefined) controller.enqueue(out)
+              } else {
+                // Classic flush expects a TransformStreamDefaultController-ish
+                // shape; synthesize one over the ReadableStream's controller.
+                /** @type {any} */
+                const proxy = {
+                  enqueue: (/** @type {any} */ c) => controller.enqueue(c),
+                  error: (/** @type {any} */ e) => controller.error(e),
+                  terminate: () => controller.close()
+                }
+                const fn = /** @type {ClassicWebFlushFn} */ (flushFn)
+                fn(proxy)
               }
-              const fn = /** @type {ClassicWebFlushFn} */ (flushFn)
-              fn(proxy)
             }
           }
           controller.close()
         } catch (err) {
           controller.error(err)
         }
-      })()
-    },
-    cancel () { endSource() }
-  })
-
-  const writable = new WritableStream({
-    write (chunk) {
-      queue.push(chunk)
-      wakeOne(sourceWakeups)
-      if (queue.length >= QUEUE_HWM) {
-        return new Promise((resolve) => { writeWaiters.push(resolve) })
-      }
-      return undefined
-    },
-    async close () {
-      endSource()
-      if (consumerDone) await consumerDone
-    },
-    abort () { endSource() }
-  })
-
-  return { readable, writable }
+      },
+      cancel (reason) { return finalize(reason, 'readable') }
+    }),
+    writable: new WritableStream({
+      start (controller) { writableController = controller },
+      write (chunk) {
+        queue.push(chunk)
+        wakeOne(sourceWakeups)
+        if (queue.length >= QUEUE_HWM) {
+          return new Promise((resolve) => { writeWaiters.push(resolve) })
+        }
+        return undefined
+      },
+      close () {
+        // Clean end: let the source iterable return so the user's `for await`
+        // exits normally and pull() can run any flush logic.
+        sourceEnded = true
+        wakeAll(sourceWakeups)
+      },
+      abort (reason) { return finalize(reason, 'writable') }
+    })
+  }
 }
 
 export default transform

@@ -18,26 +18,28 @@ readableStream
 
 ## Contents
 
-- [Why](#why)
-- [Migrating from v4](#migrating-from-v4)
-- [API](#api)
-  - [Transform function styles](#transform-function-styles)
-- [Recipes](#recipes)
-  - [Map](#map)
-  - [Filter](#filter)
-  - [FlatMap](#flatmap)
-  - [Batch](#batch)
-  - [Tap](#tap)
-  - [Parse newline-delimited input](#parse-newline-delimited-input)
-- [Node-style streams (`from 'through2'`)](#node-style-streams-from-through2)
-  - [`transform()`](#transform)
-  - [`objectTransform()`](#objecttransform)
-  - [`transformer()`](#transformer)
-  - [Composing pipelines](#composing-pipelines)
-  - [Default export (legacy)](#default-export-legacy)
-- [Web Streams (`from 'through2/web'`)](#web-streams-from-through2web)
-  - [`transform()` (web)](#transform-web)
-- [License](#license)
+* [Contents](#contents)
+* [Why](#why)
+* [Migrating from v4](#migrating-from-v4)
+* [API](#api)
+  * [Transform function styles](#transform-function-styles)
+* [Recipes](#recipes)
+  * [Map](#map)
+  * [Filter](#filter)
+  * [FlatMap](#flatmap)
+  * [Batch](#batch)
+  * [Tap](#tap)
+  * [Parse newline-delimited input](#parse-newline-delimited-input)
+* [Node-style streams (`from 'through2'`)](#node-style-streams-from-through2)
+  * [`transform()`](#transform)
+  * [`objectTransform()`](#objecttransform)
+  * [`transformer()`](#transformer)
+  * [Composing pipelines](#composing-pipelines)
+  * [Default export (legacy)](#default-export-legacy)
+* [Web Streams (`from 'through2/web'`)](#web-streams-from-through2web)
+  * [`transform()` (web)](#transform-web)
+  * [Implementation notes](#implementation-notes)
+* [License](#license)
 
 ## Why
 
@@ -100,7 +102,7 @@ Two import paths, mirroring the two stream worlds:
 | `from 'through2'`            | Node-style streams           | `stream.Transform`     | You're working with `Readable`/`Writable`/`Transform`-shaped streams (`.pipe(...)`) |
 | `from 'through2/web'`        | Web Streams (WHATWG)         | `TransformStream`      | You're working with `ReadableStream`/`WritableStream`-shaped streams (`.pipeThrough(...)`) |
 
-The two entries differ in the *stream API* they target, not the runtime they run on. Either entry can run in Node.js, browsers, Deno, Bun, or Cloudflare Workers — pick the one that matches the streams you're piping with.
+The two entries differ in the *stream API* they target, not the runtime they run on. Either entry can run in Node.js, browsers, Deno, Bun, or Cloudflare Workers. Pick the one that matches the streams you're piping with.
 
 - **`from 'through2'`** uses the Node-style streams API (`Readable`/`Writable`/`Transform`, `.pipe()`, callback-driven `_transform`). It depends on [`readable-stream`](https://github.com/nodejs/readable-stream); browser bundlers pick up that package's `browser` field automatically and ship its self-contained shim, so no Node-builtin polyfill is needed.
 - **`from 'through2/web'`** uses the WHATWG Web Streams API (`TransformStream`, `.pipeThrough()`). Zero runtime dependencies; relies only on `TransformStream` being a global (it is in modern browsers, Node.js >= 18, Deno, Bun, Workers).
@@ -206,7 +208,7 @@ objectTransform(async function * (source) {
 })
 ```
 
-For a runnable end-to-end demo combining NDJSON parsing, level filtering, formatting, and a tally — see [`example-ndjson.js`](./example-ndjson.js):
+For a runnable end-to-end demo combining NDJSON parsing, level filtering, formatting, and a tally, see [`example-ndjson.js`](./example-ndjson.js):
 
 ```bash
 cat app.log | node example-ndjson.js warn
@@ -353,6 +355,16 @@ await response.body
   .pipeThrough(transform(async (chunk) => chunk))
   .pipeTo(destinationWritableStream)
 ```
+
+### Implementation notes
+
+At the time of writing, Chromium hasn't shipped the cleanup hook that `TransformStream` would use to tear down an in-flight async generator on cancel. Without a workaround, calling `reader.cancel()` on a browser-side pipeline would leave your `async function *` suspended and its `finally` block would never run. The web entry handles this for you:
+
+- Backpressure works in both directions through `pipeThrough`.
+- Cancelling the consumer or aborting the producer cleans up your generator (its `finally` runs) and errors the other side.
+- Same behaviour in browsers, Node.js, Deno, Bun, and Cloudflare Workers.
+
+One thing to note: `transform(asyncGenFn)` returns a `{ readable, writable }` pair rather than a `TransformStream` instance. `pipeThrough` and `pipeTo` accept it identically.
 
 ## License
 
