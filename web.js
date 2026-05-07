@@ -139,7 +139,9 @@ function asyncGenTransform (gen, flushFn) {
   /** @type {Promise<void> | null} */
   let consumerDone = null
 
-  return new TransformStream({
+  // The `cancel` hook below is in the WHATWG Streams spec but not yet in
+  // TypeScript's `Transformer` lib types; intersect the type to admit it.
+  return new TransformStream(/** @type {Transformer<any, any> & { cancel?: () => void }} */ ({
     start (controller) {
       consumerDone = (async () => {
         try {
@@ -185,7 +187,7 @@ function asyncGenTransform (gen, flushFn) {
       // Release any backpressured writes so they don't leak.
       while (writeWaiters.length) /** @type {() => void} */ (writeWaiters.shift())()
     }
-  })
+  }))
 }
 
 export default transform
