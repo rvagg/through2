@@ -1,0 +1,72 @@
+name: Test & Maybe Release
+on: [push, pull_request]
+
+jobs:
+  test:
+    strategy:
+      fail-fast: false
+      matrix:
+        node: [lts/*, current]
+        os: [macos-latest, ubuntu-latest, windows-latest]
+    runs-on: ${{ matrix.os }}
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v6.0.2
+      - name: Use Node.js ${{ matrix.node }}
+        uses: actions/setup-node@v6.4.0
+        with:
+          node-version: ${{ matrix.node }}
+      - name: Install Dependencies
+        run: npm install --no-progress
+      - name: Check build is up to date
+        run: |
+          npm run build
+          git diff --exit-code || (echo "::error::Build artifacts not committed. Run 'npm run build' and commit the changes." && exit 1)
+      - name: Lint
+        run: npm run lint
+      - name: Run node tests
+        run: npm run test:node
+
+  browser-test:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v6.0.2
+      - name: Use Node.js lts/*
+        uses: actions/setup-node@v6.4.0
+        with:
+          node-version: lts/*
+      - name: Install Dependencies
+        run: npm install --no-progress
+      - name: Run browser tests
+        run: npm run test:browser
+
+  release:
+    name: Release
+    needs: [test, browser-test]
+    runs-on: ubuntu-latest
+    if: github.event_name == 'push' && github.ref == 'refs/heads/master'
+    permissions:
+      contents: write
+      issues: write
+      pull-requests: write
+      id-token: write
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v6.0.2
+        with:
+          fetch-depth: 0
+      - name: Setup Node.js
+        uses: actions/setup-node@v6.4.0
+        with:
+          node-version: lts/*
+          registry-url: 'https://registry.npmjs.org'
+      - name: Install dependencies
+        run: npm install --no-progress --no-package-lock --no-save
+      - name: Build
+        run: npm run build
+      - name: Release
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          NPM_CONFIG_PROVENANCE: true
+        run: npx semantic-release
