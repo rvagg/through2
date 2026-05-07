@@ -25,9 +25,12 @@
  *
  * @param {WebTransformFn} [transformFn]
  * @param {WebFlushFn} [flushFn]
- * @returns {TransformStream<any, any>}
+ * @returns {{ readable: ReadableStream<any>, writable: WritableStream<any> }}
  */
-export function transform(transformFn?: WebTransformFn, flushFn?: WebFlushFn): TransformStream<any, any>;
+export function transform(transformFn?: WebTransformFn, flushFn?: WebFlushFn): {
+    readable: ReadableStream<any>;
+    writable: WritableStream<any>;
+};
 export default transform;
 export type ClassicWebTransformFn = (chunk: any, controller: TransformStreamDefaultController<any>) => void;
 export type AsyncWebTransformFn = (chunk: any) => any | Promise<any>;
