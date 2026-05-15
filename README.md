@@ -77,7 +77,7 @@ await response.body
 
 v5 is a major version bump. Headline changes:
 
-- **ESM only.** `require('through2')` no longer works. Convert callers to `import` or pin to `through2@4`.
+- **ESM source.** The package ships as ESM; new code should `import` it. CommonJS callers can still `require('through2')` on Node.js 22.12+ via `require(esm)`. On older Node, convert to `import` or pin to `through2@4`.
 - **Named exports added.** `transform`, `objectTransform`, `transformer` are the preferred surface in new code.
 - **Default export still works.** `through2(fn)`, `through2.obj(fn)`, and `through2.ctor(fn)` produce equivalent stream instances. Once your callers are converted to ESM imports, the call-site syntax and runtime behaviour are unchanged (modulo the `instanceof` caveat below).
 - **Async functions and async generators are now accepted** as transform functions, in addition to the classic `(chunk, enc, cb)` callback form. See [Transform function styles](#transform-function-styles).

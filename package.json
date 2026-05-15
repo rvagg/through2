@@ -7,12 +7,14 @@
   "main": "./through2.js",
   "exports": {
     ".": {
+      "types": "./types/through2.d.ts",
       "import": "./through2.js",
-      "types": "./types/through2.d.ts"
+      "require": "./through2.js"
     },
     "./web": {
+      "types": "./types/web.d.ts",
       "import": "./web.js",
-      "types": "./types/web.d.ts"
+      "require": "./web.js"
     }
   },
   "types": "./types/through2.d.ts",
