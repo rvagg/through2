@@ -1,3 +1,9 @@
+## [5.0.2](https://github.com/rvagg/through2/compare/v5.0.1...v5.0.2) (2026-06-22)
+
+### Trivial Changes
+
+* **deps:** bump actions/checkout from 6.0.2 to 6.0.3 ([#121](https://github.com/rvagg/through2/issues/121)) ([180016b](https://github.com/rvagg/through2/commit/180016b145fff3f2eee93b854ad273776d245d6b))
+
 ## [5.0.1](https://github.com/rvagg/through2/compare/v5.0.0...v5.0.1) (2026-05-15)
 
 ### Bug Fixes
