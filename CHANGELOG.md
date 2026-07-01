@@ -1,3 +1,9 @@
+## [5.0.4](https://github.com/rvagg/through2/compare/v5.0.3...v5.0.4) (2026-07-01)
+
+### Trivial Changes
+
+* **deps-dev:** bump @types/node from 25.9.4 to 26.0.1 ([#124](https://github.com/rvagg/through2/issues/124)) ([7289ce5](https://github.com/rvagg/through2/commit/7289ce55380094046093200459cb6355d6f39b91))
+
 ## [5.0.3](https://github.com/rvagg/through2/compare/v5.0.2...v5.0.3) (2026-06-23)
 
 ### Trivial Changes
