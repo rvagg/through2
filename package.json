@@ -1,6 +1,6 @@
 {
   "name": "through2",
-  "version": "5.0.5",
+  "version": "5.0.6",
   "description": "Tiny utilities for inserting transformation logic into Node.js stream and Web Streams pipelines",
   "license": "MIT",
   "type": "module",
