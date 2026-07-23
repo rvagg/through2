@@ -1,3 +1,5 @@
+## [5.0.7](https://github.com/rvagg/through2/compare/v5.0.6...v5.0.7) (2026-07-23)
+
 ## [5.0.6](https://github.com/rvagg/through2/compare/v5.0.5...v5.0.6) (2026-07-21)
 
 ## [5.0.5](https://github.com/rvagg/through2/compare/v5.0.4...v5.0.5) (2026-07-03)
