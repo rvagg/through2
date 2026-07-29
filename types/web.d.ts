@@ -1,4 +1,18 @@
 /**
+ * @file Tiny utility for inserting transformation logic into Web Streams
+ * pipelines. Returns `TransformStream` instances; zero runtime dependencies;
+ * runs anywhere `TransformStream` is a global (modern browsers, Node.js,
+ * Deno, Bun, Cloudflare Workers). See the root `through2` entry for the
+ * Node.js streams variant.
+ */
+export type ClassicWebTransformFn = (chunk: any, controller: TransformStreamDefaultController<any>) => void;
+export type AsyncWebTransformFn = (chunk: any) => any | Promise<any>;
+export type AsyncGenWebTransformFn = (source: AsyncIterable<any>) => AsyncGenerator<any, void, void>;
+export type WebTransformFn = ClassicWebTransformFn | AsyncWebTransformFn | AsyncGenWebTransformFn;
+export type ClassicWebFlushFn = (controller: TransformStreamDefaultController<any>) => void;
+export type AsyncWebFlushFn = () => any | Promise<any>;
+export type WebFlushFn = ClassicWebFlushFn | AsyncWebFlushFn;
+/**
  * Build a TransformStream around a transformation function (classic /
  * async / async generator; auto-dispatched).
  *
@@ -27,16 +41,9 @@
  * @param {WebFlushFn} [flushFn]
  * @returns {{ readable: ReadableStream<any>, writable: WritableStream<any> }}
  */
-export function transform(transformFn?: WebTransformFn, flushFn?: WebFlushFn): {
+export declare function transform(transformFn?: WebTransformFn, flushFn?: WebFlushFn): {
     readable: ReadableStream<any>;
     writable: WritableStream<any>;
 };
 export default transform;
-export type ClassicWebTransformFn = (chunk: any, controller: TransformStreamDefaultController<any>) => void;
-export type AsyncWebTransformFn = (chunk: any) => any | Promise<any>;
-export type AsyncGenWebTransformFn = (source: AsyncIterable<any>) => AsyncGenerator<any, void, void>;
-export type WebTransformFn = ClassicWebTransformFn | AsyncWebTransformFn | AsyncGenWebTransformFn;
-export type ClassicWebFlushFn = (controller: TransformStreamDefaultController<any>) => void;
-export type AsyncWebFlushFn = () => any | Promise<any>;
-export type WebFlushFn = ClassicWebFlushFn | AsyncWebFlushFn;
 //# sourceMappingURL=web.d.ts.map

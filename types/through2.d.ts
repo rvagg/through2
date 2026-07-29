@@ -1,4 +1,18 @@
 /**
+ * @file Tiny utilities for inserting transformation logic into Node.js stream
+ * pipelines without subclassing `Transform`. Exports `transform`,
+ * `objectTransform`, `transformer`. See `through2/web` for the Web Streams
+ * variant.
+ */
+export type ClassicTransformFn = (chunk: any, encoding: BufferEncoding, callback: (err?: Error | null, data?: any) => void) => void;
+export type AsyncTransformFn = (chunk: any, encoding: BufferEncoding) => any | Promise<any>;
+export type AsyncGenTransformFn = (source: AsyncIterable<any>) => AsyncGenerator<any, void, void>;
+export type TransformFn = ClassicTransformFn | AsyncTransformFn | AsyncGenTransformFn;
+export type ClassicFlushFn = (callback: (err?: Error | null) => void) => void;
+export type AsyncFlushFn = () => any | Promise<any>;
+export type FlushFn = ClassicFlushFn | AsyncFlushFn;
+export type TransformOptions = import('readable-stream').TransformOptions;
+/**
  * Build a Transform around a transformation function (classic / async / async
  * generator; auto-dispatched).
  *
@@ -23,7 +37,7 @@
  * @param {FlushFn} [flushFn]
  * @returns {import('readable-stream').Transform}
  */
-export function transform(options?: TransformOptions | TransformFn, transformFn?: TransformFn, flushFn?: FlushFn): import("readable-stream").Transform;
+export declare function transform(options?: TransformOptions | TransformFn, transformFn?: TransformFn, flushFn?: FlushFn): import('readable-stream').Transform;
 /**
  * Like {@link transform}, with `objectMode: true` by default.
  *
@@ -44,7 +58,7 @@ export function transform(options?: TransformOptions | TransformFn, transformFn?
  * @param {FlushFn} [flushFn]
  * @returns {import('readable-stream').Transform}
  */
-export function objectTransform(options?: TransformOptions | TransformFn, transformFn?: TransformFn, flushFn?: FlushFn): import("readable-stream").Transform;
+export declare function objectTransform(options?: TransformOptions | TransformFn, transformFn?: TransformFn, flushFn?: FlushFn): import('readable-stream').Transform;
 /**
  * Build a reusable factory. The returned function works with or without
  * `new`; per-call options merge over the configured defaults and are exposed
@@ -67,18 +81,9 @@ export function objectTransform(options?: TransformOptions | TransformFn, transf
  * @param {FlushFn} [flushFn]
  * @returns {(override?: TransformOptions) => import('readable-stream').Transform & { options: TransformOptions }}
  */
-export function transformer(options?: TransformOptions | TransformFn, transformFn?: TransformFn, flushFn?: FlushFn): (override?: TransformOptions) => import("readable-stream").Transform & {
+export declare function transformer(options?: TransformOptions | TransformFn, transformFn?: TransformFn, flushFn?: FlushFn): (override?: TransformOptions) => import('readable-stream').Transform & {
     options: TransformOptions;
 };
-export default through2;
-export type ClassicTransformFn = (chunk: any, encoding: BufferEncoding, callback: (err?: Error | null, data?: any) => void) => void;
-export type AsyncTransformFn = (chunk: any, encoding: BufferEncoding) => any | Promise<any>;
-export type AsyncGenTransformFn = (source: AsyncIterable<any>) => AsyncGenerator<any, void, void>;
-export type TransformFn = ClassicTransformFn | AsyncTransformFn | AsyncGenTransformFn;
-export type ClassicFlushFn = (callback: (err?: Error | null) => void) => void;
-export type AsyncFlushFn = () => any | Promise<any>;
-export type FlushFn = ClassicFlushFn | AsyncFlushFn;
-export type TransformOptions = import("readable-stream").TransformOptions;
 /**
  * Default export: `transform` with legacy `.obj` / `.ctor` for v4
  * back-compatibility.
@@ -88,4 +93,5 @@ declare const through2: typeof transform & {
     obj: typeof objectTransform;
     ctor: typeof transformer;
 };
+export default through2;
 //# sourceMappingURL=through2.d.ts.map
