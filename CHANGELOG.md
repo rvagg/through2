@@ -1,3 +1,9 @@
+## [5.0.11](https://github.com/rvagg/through2/compare/v5.0.10...v5.0.11) (2026-07-30)
+
+### Trivial Changes
+
+* downgrade broken changelog maker, backfill missing ([#131](https://github.com/rvagg/through2/issues/131)) ([a530363](https://github.com/rvagg/through2/commit/a5303634c43ca0289eac1bff9eb5da52e7cda94a))
+
 ## [5.0.10](https://github.com/rvagg/through2/compare/v5.0.9...v5.0.10) (2026-07-29)
 
 ### Trivial Changes
