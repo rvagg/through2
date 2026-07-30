@@ -1,14 +1,42 @@
 ## [5.0.10](https://github.com/rvagg/through2/compare/v5.0.9...v5.0.10) (2026-07-29)
 
+### Trivial Changes
+
+* **deps-dev:** bump typescript from 6.0.3 to 7.0.2 ([521036a](https://github.com/rvagg/through2/commit/521036a7eb692819f6e5900aa96da1e88bbf1b30))
+* fixes for ts@7 ([be64db0](https://github.com/rvagg/through2/commit/be64db011cbfca00af7d0ba80917ebfa4e19b404))
+
 ## [5.0.9](https://github.com/rvagg/through2/compare/v5.0.8...v5.0.9) (2026-07-29)
+
+### Trivial Changes
+
+* **deps-dev:** bump @semantic-release/changelog from 6.0.3 to 7.0.0 ([#130](https://github.com/rvagg/through2/issues/130)) ([76804a1](https://github.com/rvagg/through2/commit/76804a1fe27fe56bcd28038273d19e08847cadbf))
 
 ## [5.0.8](https://github.com/rvagg/through2/compare/v5.0.7...v5.0.8) (2026-07-29)
 
+### Trivial Changes
+
+* **deps-dev:** bump @semantic-release/git from 10.0.1 to 11.0.0 ([#129](https://github.com/rvagg/through2/issues/129)) ([4bb0fa4](https://github.com/rvagg/through2/commit/4bb0fa4a98583fc8c7a77916e490ba992d70e6c9))
+
 ## [5.0.7](https://github.com/rvagg/through2/compare/v5.0.6...v5.0.7) (2026-07-23)
+
+### Trivial Changes
+
+* **ci:** switch to hashes for versioning ([27061ac](https://github.com/rvagg/through2/commit/27061ac284207070de1cfe4b91979f4bdf65341d))
+* **deps:** bump actions/checkout from 7.0.0 to 7.0.1 ([9839c29](https://github.com/rvagg/through2/commit/9839c29f59c3166b0564d283db7798c85e712399))
 
 ## [5.0.6](https://github.com/rvagg/through2/compare/v5.0.5...v5.0.6) (2026-07-21)
 
+### Trivial Changes
+
+* **ci:** don't use cached lts version ([1c9d76f](https://github.com/rvagg/through2/commit/1c9d76f5a0d59fa13db2974af5aa4215a8c9423f))
+* **deps:** add readable-stream types ([4824b24](https://github.com/rvagg/through2/commit/4824b24f7a023ebe12f9eb9672fc426f315cc17f))
+* **deps:** bump actions/setup-node from 6.4.0 to 7.0.0 ([59a2c3f](https://github.com/rvagg/through2/commit/59a2c3f4781e1bf5f13fecce1d41cb10df2509d8))
+
 ## [5.0.5](https://github.com/rvagg/through2/compare/v5.0.4...v5.0.5) (2026-07-03)
+
+### Trivial Changes
+
+* **deps-dev:** bump conventional-changelog-conventionalcommits ([#125](https://github.com/rvagg/through2/issues/125)) ([6747cab](https://github.com/rvagg/through2/commit/6747cabc2813d77283c1d88db688d9fdb1787874))
 
 ## [5.0.4](https://github.com/rvagg/through2/compare/v5.0.3...v5.0.4) (2026-07-01)
 
