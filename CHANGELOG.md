@@ -1,3 +1,9 @@
+## [5.0.12](https://github.com/rvagg/through2/compare/v5.0.11...v5.0.12) (2026-10-19)
+
+### Trivial Changes
+
+* **deps:** bump actions/setup-node from 7.0.0 to 7.1.0 ([#137](https://github.com/rvagg/through2/issues/137)) ([96f43f0](https://github.com/rvagg/through2/commit/96f43f088f27e659785ca759872bf66611f5232a))
+
 ## [5.0.11](https://github.com/rvagg/through2/compare/v5.0.10...v5.0.11) (2026-07-30)
 
 ### Trivial Changes
