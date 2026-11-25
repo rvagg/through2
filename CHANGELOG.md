@@ -1,3 +1,9 @@
+## [5.0.13](https://github.com/rvagg/through2/compare/v5.0.12...v5.0.13) (2026-11-25)
+
+### Trivial Changes
+
+* **deps-dev:** bump semantic-release from 25.0.9 to 26.0.1 ([#138](https://github.com/rvagg/through2/issues/138)) ([f3cc10b](https://github.com/rvagg/through2/commit/f3cc10ba9b34497cd2584c4efee44c14fb8ed786))
+
 ## [5.0.12](https://github.com/rvagg/through2/compare/v5.0.11...v5.0.12) (2026-10-19)
 
 ### Trivial Changes
